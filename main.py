@@ -406,30 +406,30 @@ def delete_account():
                 FriendRequest.sender_id == current_user.id,
                 FriendRequest.receiver_id == current_user.id
             )
-        ).delete()
+        ).delete(synchronize_session=False)
         
         Message.query.filter(
             or_(
                 Message.sender_id == current_user.id,
                 Message.receiver_id == current_user.id
             )
-        ).delete()
+        ).delete(synchronize_session=False)
         
         Review.query.filter(
             or_(
                 Review.reviewer_id == current_user.id,
                 Review.reviewed_id == current_user.id
             )
-        ).delete()
+        ).delete(synchronize_session=False)
         
         BlockedUser.query.filter(
             or_(
                 BlockedUser.blocker_id == current_user.id,
                 BlockedUser.blocked_id == current_user.id
             )
-        ).delete()
+        ).delete(synchronize_session=False)
         
-        Skill.query.filter_by(user_id=current_user.id).delete()
+        Skill.query.filter_by(user_id=current_user.id).delete(synchronize_session=False)
         
         # Delete user
         db.session.delete(current_user)
