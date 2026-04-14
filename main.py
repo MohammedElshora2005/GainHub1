@@ -167,6 +167,7 @@ def get_users_api():
             continue
         
         # Check if blocked
+        is_blocked = False
         if current_user.is_authenticated:
             blocked = BlockedUser.query.filter(
                 and_(
@@ -175,6 +176,15 @@ def get_users_api():
                 )
             ).first()
             if blocked:
+                continue
+            # Check if current user is blocked by this user
+            blocked_by = BlockedUser.query.filter(
+                and_(
+                    BlockedUser.blocker_id == user.id,
+                    BlockedUser.blocked_id == current_user.id
+                )
+            ).first()
+            if blocked_by:
                 continue
         
         rel_status = "none"
@@ -201,7 +211,8 @@ def get_users_api():
             "relationship": rel_status,
             "rating": user.get_average_rating(),
             "reviewCount": user.get_review_count(),
-            "is_online": user.is_online
+            "is_online": user.is_online,
+            "is_blocked": is_blocked
         })
     
     return jsonify(user_list)
@@ -224,6 +235,16 @@ def get_my_friends():
     for friend_rel in friends:
         friend_id = friend_rel.sender_id if friend_rel.receiver_id == current_user.id else friend_rel.receiver_id
         friend = User.query.get(friend_id)
+        
+        # Check if blocked
+        blocked = BlockedUser.query.filter(
+            or_(
+                and_(BlockedUser.blocker_id == current_user.id, BlockedUser.blocked_id == friend_id),
+                and_(BlockedUser.blocker_id == friend_id, BlockedUser.blocked_id == current_user.id)
+            )
+        ).first()
+        if blocked:
+            continue
         
         offer = Skill.query.filter_by(user_id=friend.id, type='offer').first()
         learn = Skill.query.filter_by(user_id=friend.id, type='request').first()
@@ -318,6 +339,109 @@ def get_current_user():
         "rating": current_user.get_average_rating(),
         "reviewCount": current_user.get_review_count()
     })
+
+# ============================================
+# Edit Profile
+# ============================================
+
+@app.route('/api/update_profile', methods=['PUT'])
+@login_required
+def update_profile():
+    try:
+        data = request.get_json()
+        new_username = data.get('username')
+        new_skill_offer = data.get('skillOffer')
+        new_skill_learn = data.get('skillLearn')
+        new_category = data.get('category')
+        
+        # Check if username is taken (if changed)
+        if new_username != current_user.username:
+            existing = User.query.filter_by(username=new_username).first()
+            if existing:
+                return jsonify({"success": False, "error": "Username already taken"}), 400
+        
+        # Update user
+        current_user.username = new_username
+        current_user.category = new_category
+        
+        # Update skills
+        offer_skill = Skill.query.filter_by(user_id=current_user.id, type='offer').first()
+        if offer_skill:
+            offer_skill.title = new_skill_offer
+        elif new_skill_offer:
+            db.session.add(Skill(title=new_skill_offer, type='offer', category=new_category, user_id=current_user.id))
+        
+        learn_skill = Skill.query.filter_by(user_id=current_user.id, type='request').first()
+        if learn_skill:
+            learn_skill.title = new_skill_learn
+        elif new_skill_learn:
+            db.session.add(Skill(title=new_skill_learn, type='request', category=new_category, user_id=current_user.id))
+        
+        db.session.commit()
+        return jsonify({"success": True})
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating profile: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+# ============================================
+# Delete Account (Fixed)
+# ============================================
+
+@app.route('/api/delete_account', methods=['DELETE'])
+@login_required
+def delete_account():
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        
+        # Verify username matches
+        if username != current_user.username:
+            return jsonify({"success": False, "error": "Username does not match"}), 400
+        
+        # Delete all related data first
+        FriendRequest.query.filter(
+            or_(
+                FriendRequest.sender_id == current_user.id,
+                FriendRequest.receiver_id == current_user.id
+            )
+        ).delete()
+        
+        Message.query.filter(
+            or_(
+                Message.sender_id == current_user.id,
+                Message.receiver_id == current_user.id
+            )
+        ).delete()
+        
+        Review.query.filter(
+            or_(
+                Review.reviewer_id == current_user.id,
+                Review.reviewed_id == current_user.id
+            )
+        ).delete()
+        
+        BlockedUser.query.filter(
+            or_(
+                BlockedUser.blocker_id == current_user.id,
+                BlockedUser.blocked_id == current_user.id
+            )
+        ).delete()
+        
+        Skill.query.filter_by(user_id=current_user.id).delete()
+        
+        # Delete user
+        db.session.delete(current_user)
+        db.session.commit()
+        
+        logout_user()
+        return jsonify({"success": True})
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting account: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 # ============================================
 # Contact Messages (Database + Email)
@@ -509,7 +633,7 @@ def admin_messages():
     return html
 
 # ============================================
-# Update Profile Picture (with Base64 support - No size limit)
+# Update Profile Picture (with Base64 support)
 # ============================================
 
 @app.route('/api/update_profile_pic', methods=['POST'])
@@ -522,11 +646,8 @@ def update_profile_pic():
         if not new_pic:
             return jsonify({"success": False, "error": "No image provided"}), 400
         
-        # Handle base64 image upload (no size limit - will be compressed on frontend)
+        # Handle base64 image upload
         if new_pic and new_pic.startswith('data:image'):
-            # Store base64 image directly - increased limit to 10MB
-            if len(new_pic) > 15 * 1024 * 1024:  # 15MB max
-                return jsonify({"success": False, "error": "Image too large (max 15MB after compression)"}), 400
             current_user.profile_pic = new_pic
             db.session.commit()
             print(f"✅ Profile picture updated for {current_user.username}")
@@ -789,6 +910,14 @@ def update_online_status():
     return jsonify({"success": True})
 
 # ============================================
+# Create tables on startup (for Vercel)
+# ============================================
+
+with app.app_context():
+    db.create_all()
+    print("✅ Database tables checked/created successfully!")
+
+# ============================================
 # This is for Vercel - the app object must be named 'app'
 # ============================================
 
@@ -798,15 +927,7 @@ def update_online_status():
 # Run App (for local development only)
 # ============================================
 
-# Create database tables on startup
-with app.app_context():
-    db.create_all()
-    print("✅ Database tables checked/created successfully!")
-
-
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     print("=" * 50)
     print("🚀 Gainhub Server Started!")
     print(f"📍 URL: http://localhost:5000")
