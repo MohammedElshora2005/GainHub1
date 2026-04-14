@@ -798,6 +798,12 @@ def update_online_status():
 # Run App (for local development only)
 # ============================================
 
+# Create database tables on startup
+with app.app_context():
+    db.create_all()
+    print("✅ Database tables checked/created successfully!")
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
