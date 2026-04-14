@@ -124,10 +124,25 @@
                             font-size: 13px;
                             transition: all 0.3s;
                         ">
-                            <i class="fas fa-camera"></i> Change Picture
+                            <i class="fas fa-camera"></i> <span data-i18n="changePicture">Change Picture</span>
                         </label>
                         <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
                         <div id="uploadStatus" style="font-size: 12px; margin-top: 10px; color: var(--text-muted);"></div>
+                    </div>
+                    <!-- Edit Profile Button -->
+                    <div style="text-align: center; margin-top: 15px;">
+                        <button onclick="showEditProfileModal()" class="edit-profile-btn" style="
+                            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 25px;
+                            cursor: pointer;
+                            font-weight: 600;
+                            transition: all 0.3s;
+                        ">
+                            <i class="fas fa-edit"></i> <span data-i18n="editProfile">Edit Profile</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -183,6 +198,22 @@
             <a href="/logout" class="logout-link" style="color: #ff3b30; font-weight: 600; text-decoration: none; padding: 10px 20px; display: inline-block; border-radius: 25px; transition: all 0.3s;">
                 <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
             </a>
+        </div>
+        
+        <!-- Delete Account Button -->
+        <div style="text-align: center; margin-top: 10px;">
+            <button onclick="showDeleteAccountModal()" class="delete-account-btn" style="
+                background: transparent;
+                border: 1px solid #ff3b30;
+                color: #ff3b30;
+                padding: 10px 20px;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s;
+            ">
+                <i class="fas fa-trash-alt"></i> <span data-i18n="deleteAccount">Delete Account</span>
+            </button>
         </div>
     </section>
 
@@ -241,6 +272,58 @@
     </div>
 </div>
 
+<!-- Delete Account Modal -->
+<div id="deleteModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
+    <div style="background:var(--bg-card); backdrop-filter:blur(24px); border-radius:24px; padding:30px; max-width:400px; text-align:center; border:1px solid var(--border);">
+        <i class="fas fa-exclamation-triangle" style="font-size:48px; color:#ff3b30; margin-bottom:20px;"></i>
+        <h3 style="margin-bottom:10px;" data-i18n="deleteConfirmTitle">Delete Account?</h3>
+        <p style="margin-bottom:20px; color:var(--text-muted);" data-i18n="deleteWarning">This action cannot be undone. All your data will be permanently deleted.</p>
+        <input type="text" id="confirmDeleteUsername" data-i18n-placeholder="typeUsernameToConfirm" placeholder="Type your username to confirm" style="width:100%; margin-bottom:20px; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="closeDeleteModal()" style="background:transparent; border:1px solid var(--border); padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="cancel">Cancel</button>
+            <button onclick="deleteAccount()" style="background:#ff3b30; color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="deleteForever">Delete Forever</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="editProfileModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
+    <div style="background:var(--bg-card); backdrop-filter:blur(24px); border-radius:24px; padding:30px; max-width:450px; width:90%; border:1px solid var(--border);">
+        <h3 style="margin-bottom:20px; text-align:center;" data-i18n="editProfileTitle">Edit Profile</h3>
+        
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; font-weight:600;" data-i18n="username">Username</label>
+            <input type="text" id="editUsername" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
+        </div>
+        
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; font-weight:600;" data-i18n="skillOffer">Skill You Offer</label>
+            <input type="text" id="editSkillOffer" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
+        </div>
+        
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; font-weight:600;" data-i18n="skillLearn">Skill You Want to Learn</label>
+            <input type="text" id="editSkillLearn" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
+        </div>
+        
+        <div style="margin-bottom:20px;">
+            <label style="display:block; margin-bottom:5px; font-weight:600;" data-i18n="category">Category</label>
+            <select id="editCategory" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
+                <option value="tech" data-i18n="categoryTech">💻 Technology</option>
+                <option value="art" data-i18n="categoryArt">🎨 Art & Design</option>
+                <option value="language" data-i18n="categoryLang">🌍 Languages</option>
+                <option value="business" data-i18n="categoryBusiness">📊 Business</option>
+                <option value="sports" data-i18n="categorySports">⚽ Sports</option>
+            </select>
+        </div>
+        
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="closeEditProfileModal()" style="background:transparent; border:1px solid var(--border); padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="cancel">Cancel</button>
+            <button onclick="saveProfileChanges()" style="background:linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="save">Save Changes</button>
+        </div>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='skillFrontEnd.js') }}"></script>
 <script>
     // ============================================
@@ -259,6 +342,142 @@
     if (localStorage.getItem('darkMode') === 'true') {
         document.body.classList.add('dark');
         document.getElementById('darkModeBtn').innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    // ============================================
+    // Edit Profile Functions
+    // ============================================
+    let currentUserData = {};
+
+    async function showEditProfileModal() {
+        try {
+            const response = await fetch('/api/current_user');
+            currentUserData = await response.json();
+            
+            const userFromList = allUsers.find(u => u.id === currentUserData.id);
+            
+            document.getElementById('editUsername').value = currentUserData.username;
+            document.getElementById('editSkillOffer').value = userFromList?.skillOffer || '';
+            document.getElementById('editSkillLearn').value = userFromList?.skillLearn || '';
+            document.getElementById('editCategory').value = currentUserData.category || 'tech';
+            
+            document.getElementById('editProfileModal').style.display = 'flex';
+        } catch(e) {
+            console.error('Error loading profile data:', e);
+        }
+    }
+
+    function closeEditProfileModal() {
+        document.getElementById('editProfileModal').style.display = 'none';
+    }
+
+    async function saveProfileChanges() {
+        const newUsername = document.getElementById('editUsername').value.trim();
+        const newSkillOffer = document.getElementById('editSkillOffer').value.trim();
+        const newSkillLearn = document.getElementById('editSkillLearn').value.trim();
+        const newCategory = document.getElementById('editCategory').value;
+        
+        if (!newUsername) {
+            alert(currentLang === 'ar' ? 'الرجاء إدخال اسم المستخدم' : 'Please enter a username');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/update_profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: newUsername,
+                    skillOffer: newSkillOffer,
+                    skillLearn: newSkillLearn,
+                    category: newCategory
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(currentLang === 'ar' ? '✓ تم تحديث الملف الشخصي بنجاح' : '✓ Profile updated successfully');
+                closeEditProfileModal();
+                loadProfile();
+                updateExplore();
+            } else {
+                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+            }
+        } catch(err) {
+            alert(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error');
+        }
+    }
+
+    // ============================================
+    // Delete Account Functions
+    // ============================================
+    function showDeleteAccountModal() {
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+        document.getElementById('confirmDeleteUsername').value = '';
+    }
+
+    async function deleteAccount() {
+        const username = document.getElementById('confirmDeleteUsername').value;
+        
+        if (!username) {
+            alert(currentLang === 'ar' ? 'الرجاء كتابة اسم المستخدم للتأكيد' : 'Please enter your username to confirm');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/delete_account', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: username })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(currentLang === 'ar' ? 'تم حذف الحساب بنجاح. وداعاً!' : 'Account deleted successfully. Goodbye!');
+                window.location.href = '/';
+            } else {
+                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+            }
+        } catch(err) {
+            alert(currentLang === 'ar' ? 'خطأ في الشبكة. الرجاء المحاولة مرة أخرى' : 'Network error. Please try again.');
+        }
+    }
+
+    // ============================================
+    // Block/Unblock Functions
+    // ============================================
+    async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
+        if (isCurrentlyBlocked) {
+            const confirmed = confirm(currentLang === 'ar' ? `إلغاء حظر ${username}؟` : `Unblock ${username}?`);
+            if (confirmed) {
+                const response = await fetch(`/api/unblock_user/${userId}`, { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    alert(currentLang === 'ar' ? `✓ تم إلغاء حظر ${username}` : `✓ ${username} unblocked`);
+                    updateExplore();
+                } else {
+                    alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+                }
+            }
+        } else {
+            const confirmed = confirm(currentLang === 'ar' ? `هل أنت متأكد من حظر ${username}؟\nلن تتمكن من رؤية رسائله أو التواصل معه.` : `Are you sure you want to block ${username}?\nYou won't be able to see their messages or communicate with them.`);
+            if (confirmed) {
+                const response = await fetch(`/api/block_user/${userId}`, { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    alert(currentLang === 'ar' ? `✓ تم حظر ${username}` : `✓ ${username} blocked`);
+                    updateExplore();
+                } else {
+                    alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+                }
+            }
+        }
     }
 
     // ============================================
@@ -403,11 +622,20 @@
 
     function getActionButton(user) {
         if (user.relationship === 'accepted') {
-            return `<button onclick="openChat(${user.id}, '${escapeHtml(user.username)}')" class="chat-btn" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.3s;"><i class="fas fa-comment"></i> Chat Now</button>`;
+            return `
+                <div style="display: flex; gap: 8px; width: 100%;">
+                    <button onclick="openChat(${user.id}, '${escapeHtml(user.username)}')" class="chat-btn" style="flex: 2; background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                        <i class="fas fa-comment"></i> ${translations[currentLang]?.btnChat || 'Chat'}
+                    </button>
+                    <button onclick="toggleBlockUser(${user.id}, '${escapeHtml(user.username)}', ${user.is_blocked || false})" class="block-btn" style="flex: 1; background: ${user.is_blocked ? '#10b981' : '#ef4444'}; color: white; border: none; border-radius: 30px; cursor: pointer; transition: all 0.3s;">
+                        <i class="fas ${user.is_blocked ? 'fa-check' : 'fa-ban'}"></i> ${user.is_blocked ? (translations[currentLang]?.unblock || 'Unblock') : (translations[currentLang]?.block || 'Block')}
+                    </button>
+                </div>
+            `;
         } else if (user.relationship === 'pending') {
-            return `<button disabled class="pending-btn" style="background: #9ca3af; color: white; border: none; padding: 10px; border-radius: 30px; width: 100%;">Pending</button>`;
+            return `<button disabled class="pending-btn" style="background: #9ca3af; color: white; border: none; padding: 10px; border-radius: 30px; width: 100%;">${translations[currentLang]?.btnPending || 'Pending'}</button>`;
         } else {
-            return `<button onclick="sendFriendRequest(${user.id})" class="add-btn" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.3s;"><i class="fas fa-user-plus"></i> Add Friend</button>`;
+            return `<button onclick="sendFriendRequest(${user.id})" class="add-btn" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.3s;"><i class="fas fa-user-plus"></i> ${translations[currentLang]?.btnAdd || 'Add Friend'}</button>`;
         }
     }
 
