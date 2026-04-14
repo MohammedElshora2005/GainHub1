@@ -1,6 +1,6 @@
 // ============================================
 // Gainhub - Main JavaScript File
-// All improvements included: Search, Filter, Pagination, Dark Mode, Reviews, Admin Messages, Friends List, Block/Unblock, Delete Account, Edit Profile, User Skills
+// All improvements included: Search, Filter, Pagination, Dark Mode, Reviews, Admin Messages, Friends List, Block/Unblock, Delete Account, Edit Profile, User Skills, Site Rating, User Review
 // ============================================
 
 // --- 1. Global Variables ---
@@ -106,7 +106,13 @@ const translations = {
         category: "Category",
         save: "Save Changes",
         edit: "Edit",
-        mySkills: "My Skills"
+        mySkills: "My Skills",
+        rateUser: "Rate User",
+        submitReview: "Submit Review",
+        writeReview: "Write your review...",
+        rateOurSite: "Rate Our Site",
+        rateHelp: "Your feedback helps us improve!",
+        averageRating: "Average Rating"
     },
     ar: {
         langBtn: "🌐 English",
@@ -180,7 +186,13 @@ const translations = {
         category: "التصنيف",
         save: "حفظ التغييرات",
         edit: "تعديل",
-        mySkills: "مهاراتي"
+        mySkills: "مهاراتي",
+        rateUser: "تقييم المستخدم",
+        submitReview: "إرسال التقييم",
+        writeReview: "اكتب تقييمك...",
+        rateOurSite: "قيم موقعنا",
+        rateHelp: "ملاحظاتك تساعدنا على التحسين!",
+        averageRating: "متوسط التقييم"
     }
 };
 
@@ -544,6 +556,7 @@ async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
             if (data.success) {
                 alert(currentLang === 'ar' ? `✓ تم إلغاء حظر ${username}` : `✓ ${username} unblocked`);
                 updateExplore();
+                loadProfile();
             } else {
                 alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
             }
@@ -556,6 +569,7 @@ async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
             if (data.success) {
                 alert(currentLang === 'ar' ? `✓ تم حظر ${username}` : `✓ ${username} blocked`);
                 updateExplore();
+                loadProfile();
             } else {
                 alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
             }
@@ -660,7 +674,7 @@ document.getElementById('profilePicInput')?.addEventListener('change', async fun
     e.target.value = '';
 });
 
-// --- 13. My Friends List ---
+// --- 13. My Friends List (with Chat, Rate, Block buttons) ---
 async function loadMyFriends() {
     try {
         const response = await fetch('/api/my_friends');
@@ -698,8 +712,11 @@ async function loadMyFriends() {
                     <button onclick="openChat(${friend.id}, '${escapeHtml(friend.username)}')" class="friend-chat-btn" style="background: var(--gradient-btn); color: white; border: none; padding: 8px 16px; border-radius: 25px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
                         <i class="fas fa-comment"></i> ${translations[currentLang].btnChat}
                     </button>
-                    <button onclick="viewFriendProfile(${friend.id})" style="background: transparent; border: 1px solid var(--border); padding: 8px 12px; border-radius: 25px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
-                        <i class="fas fa-user"></i>
+                    <button onclick="showReviewModal(${friend.id}, '${escapeHtml(friend.username)}')" style="background: transparent; border: 1px solid var(--border); padding: 8px 12px; border-radius: 25px; cursor: pointer; font-size: 12px;">
+                        <i class="fas fa-star"></i> ${translations[currentLang].rateUser}
+                    </button>
+                    <button onclick="toggleBlockUser(${friend.id}, '${escapeHtml(friend.username)}', false)" class="block-friend-btn" style="background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 8px 12px; border-radius: 25px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
+                        <i class="fas fa-ban"></i> ${translations[currentLang].block}
                     </button>
                 </div>
             </div>
@@ -717,7 +734,206 @@ function viewFriendProfile(friendId) {
     }
 }
 
-// --- 14. Incoming Requests ---
+// --- 14. Review System Functions ---
+let currentReviewUserId = null;
+let currentReviewUserName = '';
+
+function initRatingStars() {
+    const stars = document.querySelectorAll('#ratingStars i');
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.getAttribute('data-rating'));
+            document.getElementById('selectedRating').value = rating;
+            
+            stars.forEach(s => {
+                const starRating = parseInt(s.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    s.className = 'fas fa-star';
+                    s.style.color = '#f59e0b';
+                } else {
+                    s.className = 'far fa-star';
+                    s.style.color = '';
+                }
+            });
+        });
+        
+        star.addEventListener('mouseenter', function() {
+            const rating = parseInt(this.getAttribute('data-rating'));
+            stars.forEach(s => {
+                const starRating = parseInt(s.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    s.className = 'fas fa-star';
+                    s.style.color = '#f59e0b';
+                }
+            });
+        });
+        
+        star.addEventListener('mouseleave', function() {
+            const selectedRating = parseInt(document.getElementById('selectedRating').value);
+            stars.forEach(s => {
+                const starRating = parseInt(s.getAttribute('data-rating'));
+                if (selectedRating > 0 && starRating <= selectedRating) {
+                    s.className = 'fas fa-star';
+                    s.style.color = '#f59e0b';
+                } else {
+                    s.className = 'far fa-star';
+                    s.style.color = '';
+                }
+            });
+        });
+    });
+}
+
+function showReviewModal(userId, userName) {
+    currentReviewUserId = userId;
+    currentReviewUserName = userName;
+    document.getElementById('reviewUserName').innerText = userName;
+    document.getElementById('selectedRating').value = 0;
+    document.getElementById('reviewComment').value = '';
+    
+    const stars = document.querySelectorAll('#ratingStars i');
+    stars.forEach(star => {
+        star.className = 'far fa-star';
+        star.style.color = '';
+    });
+    
+    document.getElementById('reviewModal').style.display = 'flex';
+}
+
+function closeReviewModal() {
+    document.getElementById('reviewModal').style.display = 'none';
+    currentReviewUserId = null;
+}
+
+async function submitReview() {
+    const rating = document.getElementById('selectedRating').value;
+    const comment = document.getElementById('reviewComment').value;
+    
+    if (!rating || rating === '0') {
+        alert(currentLang === 'ar' ? 'الرجاء اختيار تقييم' : 'Please select a rating');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/submit_review/${currentReviewUserId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rating: parseInt(rating), comment: comment })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(currentLang === 'ar' ? '✓ تم إرسال تقييمك بنجاح' : '✓ Review submitted successfully');
+            closeReviewModal();
+            loadProfile();
+        } else {
+            alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+        }
+    } catch(err) {
+        alert(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error');
+    }
+}
+
+// --- 15. Site Rating Functions ---
+let selectedSiteRating = 0;
+
+async function loadSiteRating() {
+    try {
+        const response = await fetch('/api/site_rating');
+        const data = await response.json();
+        
+        const avgRating = data.average_rating || 0;
+        const ratingCount = data.rating_count || 0;
+        
+        document.getElementById('avgRatingValue').innerText = avgRating.toFixed(1);
+        document.getElementById('ratingCount').innerText = `(${ratingCount} votes)`;
+        
+        const avgStarsContainer = document.getElementById('avgRatingStars');
+        if (avgStarsContainer) {
+            avgStarsContainer.innerHTML = generateStars(avgRating);
+        }
+        
+        if (data.user_rated) {
+            document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">✓ Thank you for your rating!</span>';
+            const stars = document.querySelectorAll('#siteRatingStars i');
+            stars.forEach(star => {
+                star.style.cursor = 'default';
+                star.style.opacity = '0.5';
+            });
+        }
+    } catch(e) {
+        console.error('Error loading site rating:', e);
+    }
+}
+
+function initSiteRatingStars() {
+    const stars = document.querySelectorAll('#siteRatingStars i');
+    stars.forEach(star => {
+        star.addEventListener('click', async function() {
+            const checkResponse = await fetch('/api/site_rating');
+            const checkData = await checkResponse.json();
+            if (checkData.user_rated) {
+                alert(currentLang === 'ar' ? 'لقد قمت بتقييم الموقع بالفعل! شكراً لك' : 'You have already rated the site! Thank you');
+                return;
+            }
+            
+            const rating = parseInt(this.getAttribute('data-site-rating'));
+            selectedSiteRating = rating;
+            
+            const response = await fetch('/api/site_rating', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rating: rating })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">✓ Thank you for your rating!</span>';
+                
+                stars.forEach(s => {
+                    s.style.cursor = 'default';
+                    s.style.opacity = '0.5';
+                    const starRating = parseInt(s.getAttribute('data-site-rating'));
+                    if (starRating <= rating) {
+                        s.className = 'fas fa-star';
+                        s.style.color = '#f59e0b';
+                    } else {
+                        s.className = 'far fa-star';
+                        s.style.color = '';
+                    }
+                });
+                
+                loadSiteRating();
+            } else {
+                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+            }
+        });
+        
+        star.addEventListener('mouseenter', function() {
+            if (document.querySelector('#siteRatingMessage span')?.innerText.includes('Thank you')) return;
+            const rating = parseInt(this.getAttribute('data-site-rating'));
+            stars.forEach(s => {
+                const starRating = parseInt(s.getAttribute('data-site-rating'));
+                if (starRating <= rating) {
+                    s.className = 'fas fa-star';
+                    s.style.color = '#f59e0b';
+                }
+            });
+        });
+        
+        star.addEventListener('mouseleave', function() {
+            if (document.querySelector('#siteRatingMessage span')?.innerText.includes('Thank you')) return;
+            stars.forEach(s => {
+                s.className = 'far fa-star';
+                s.style.color = '';
+            });
+        });
+    });
+}
+
+// --- 16. Incoming Requests ---
 async function loadIncomingRequests() {
     const res = await fetch('/api/my_requests');
     const requests = await res.json();
@@ -753,7 +969,7 @@ async function handleFriendRequest(reqId, action) {
     }
 }
 
-// --- 15. My Reviews ---
+// --- 17. My Reviews ---
 async function loadMyReviews() {
     const container = document.getElementById('myReviews');
     if (!container) return;
@@ -786,7 +1002,7 @@ async function loadMyReviews() {
     }
 }
 
-// --- 16. Generate Stars ---
+// --- 18. Generate Stars ---
 function generateStars(rating) {
     const full = Math.floor(rating);
     const half = rating % 1 >= 0.5;
@@ -797,7 +1013,7 @@ function generateStars(rating) {
     return stars;
 }
 
-// --- 17. Explore Users with Search, Filter, Pagination ---
+// --- 19. Explore Users with Search, Filter, Pagination ---
 async function updateExplore() {
     try {
         const response = await fetch('/api/users');
@@ -902,7 +1118,7 @@ async function sendFriendRequest(userId) {
     }
 }
 
-// --- 18. Escape HTML for Security (XSS Protection) ---
+// --- 20. Escape HTML for Security (XSS Protection) ---
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -913,7 +1129,7 @@ function escapeHtml(str) {
     });
 }
 
-// --- 19. Chat System ---
+// --- 21. Chat System ---
 async function openChat(userId, userName) {
     activeChatId = userId;
     document.getElementById('chatWith').innerText = userName;
@@ -981,7 +1197,7 @@ async function sendMessage() {
     }
 }
 
-// --- 20. Contact Form ---
+// --- 22. Contact Form ---
 document.addEventListener('submit', async (e) => {
     if (e.target.id === 'contactForm') {
         e.preventDefault();
@@ -1019,7 +1235,7 @@ document.addEventListener('submit', async (e) => {
     }
 });
 
-// --- 21. Password Confirmation on Signup ---
+// --- 23. Password Confirmation on Signup ---
 document.getElementById('signupForm')?.addEventListener('submit', function(e) {
     const pwd = document.getElementById('signupPassword')?.value;
     const confirm = document.getElementById('confirmPassword')?.value;
@@ -1033,14 +1249,14 @@ document.getElementById('signupForm')?.addEventListener('submit', function(e) {
     }
 });
 
-// --- 22. Enter key for chat ---
+// --- 24. Enter key for chat ---
 document.addEventListener('keypress', (e) => {
     if (e.key === 'Enter' && document.activeElement?.id === 'chatInput') {
         sendMessage();
     }
 });
 
-// --- 23. Home Page Search ---
+// --- 25. Home Page Search ---
 function homeSearch() {
     const searchTerm = document.getElementById('homeSearch')?.value || '';
     const category = document.getElementById('homeCategory')?.value || 'all';
@@ -1068,7 +1284,7 @@ document.getElementById('homeSearch')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') homeSearch();
 });
 
-// --- 24. Admin Messages Functions ---
+// --- 26. Admin Messages Functions ---
 async function loadAdminMessages() {
     try {
         const response = await fetch('/api/contact_messages');
@@ -1182,8 +1398,11 @@ window.deleteAccount = deleteAccount;
 window.showEditProfileModal = showEditProfileModal;
 window.closeEditProfileModal = closeEditProfileModal;
 window.saveProfileChanges = saveProfileChanges;
+window.showReviewModal = showReviewModal;
+window.closeReviewModal = closeReviewModal;
+window.submitReview = submitReview;
 
-// --- 25. Initialize on DOM Load ---
+// --- 27. Initialize on DOM Load ---
 document.addEventListener('DOMContentLoaded', () => {
     // Set up search listeners
     const searchInput = document.getElementById('searchInput');
@@ -1227,4 +1446,9 @@ document.addEventListener('DOMContentLoaded', () => {
             el.placeholder = translations[currentLang][key];
         }
     });
+    
+    // Initialize rating stars and site rating
+    initRatingStars();
+    initSiteRatingStars();
+    loadSiteRating();
 });
