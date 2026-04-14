@@ -1,6 +1,6 @@
 // ============================================
 // Gainhub - Main JavaScript File
-// All improvements included: Search, Filter, Pagination, Dark Mode, Reviews, Admin Messages, Friends List, etc.
+// All improvements included: Search, Filter, Pagination, Dark Mode, Reviews, Admin Messages, Friends List, Block/Unblock, Delete Account, Edit Profile
 // ============================================
 
 // --- 1. Global Variables ---
@@ -90,7 +90,22 @@ const translations = {
         logout: "Logout",
         allOfferLearn: "All: Offer/Learn",
         offering: "Offering",
-        wantToLearn: "Want to Learn"
+        wantToLearn: "Want to Learn",
+        changePicture: "Change Picture",
+        deleteAccount: "Delete Account",
+        deleteConfirmTitle: "Delete Account?",
+        deleteWarning: "This action cannot be undone. All your data will be permanently deleted.",
+        typeUsernameToConfirm: "Type your username to confirm",
+        cancel: "Cancel",
+        deleteForever: "Delete Forever",
+        block: "Block",
+        unblock: "Unblock",
+        editProfile: "Edit Profile",
+        editProfileTitle: "Edit Profile",
+        username: "Username",
+        category: "Category",
+        save: "Save Changes",
+        edit: "Edit"
     },
     ar: {
         langBtn: "🌐 English",
@@ -148,7 +163,22 @@ const translations = {
         logout: "تسجيل خروج",
         allOfferLearn: "الكل: يقدم/يريد",
         offering: "يقدم",
-        wantToLearn: "يريد التعلم"
+        wantToLearn: "يريد التعلم",
+        changePicture: "تغيير الصورة",
+        deleteAccount: "حذف الحساب",
+        deleteConfirmTitle: "حذف الحساب؟",
+        deleteWarning: "هذا الإجراء لا يمكن التراجع عنه. كل بياناتك سيتم حذفها نهائياً.",
+        typeUsernameToConfirm: "اكتب اسم المستخدم لتأكيد الحذف",
+        cancel: "إلغاء",
+        deleteForever: "حذف نهائي",
+        block: "حظر",
+        unblock: "إلغاء الحظر",
+        editProfile: "تعديل الملف",
+        editProfileTitle: "تعديل الملف الشخصي",
+        username: "اسم المستخدم",
+        category: "التصنيف",
+        save: "حفظ التغييرات",
+        edit: "تعديل"
     }
 };
 
@@ -218,6 +248,53 @@ function toggleLanguage() {
     const pendingTitle = document.querySelector('#incomingRequests')?.parentElement?.querySelector('h3');
     if (pendingTitle && pendingTitle.getAttribute('data-i18n') === 'pendingTitle') {
         pendingTitle.textContent = translations[currentLang].pendingTitle;
+    }
+    
+    // Update delete modal texts
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        const titleEl = deleteModal.querySelector('h3');
+        const warningEl = deleteModal.querySelector('p');
+        const cancelBtn = deleteModal.querySelector('button:first-child');
+        const deleteBtn = deleteModal.querySelector('button:last-child');
+        const inputEl = deleteModal.querySelector('input');
+        if (titleEl) titleEl.textContent = translations[currentLang].deleteConfirmTitle;
+        if (warningEl) warningEl.textContent = translations[currentLang].deleteWarning;
+        if (cancelBtn) cancelBtn.textContent = translations[currentLang].cancel;
+        if (deleteBtn) deleteBtn.textContent = translations[currentLang].deleteForever;
+        if (inputEl) inputEl.placeholder = translations[currentLang].typeUsernameToConfirm;
+    }
+    
+    // Update edit modal texts
+    const editModal = document.getElementById('editProfileModal');
+    if (editModal) {
+        const titleEl = editModal.querySelector('h3');
+        const usernameLabel = editModal.querySelector('label[data-i18n="username"]');
+        const categoryLabel = editModal.querySelector('label[data-i18n="category"]');
+        const cancelBtn = editModal.querySelector('button:first-child');
+        const saveBtn = editModal.querySelector('button:last-child');
+        if (titleEl) titleEl.textContent = translations[currentLang].editProfileTitle;
+        if (usernameLabel) usernameLabel.textContent = translations[currentLang].username;
+        if (categoryLabel) categoryLabel.textContent = translations[currentLang].category;
+        if (cancelBtn) cancelBtn.textContent = translations[currentLang].cancel;
+        if (saveBtn) saveBtn.textContent = translations[currentLang].save;
+        
+        // Update skill labels
+        const offerLabel = editModal.querySelector('label[data-i18n="skillOffer"]');
+        const learnLabel = editModal.querySelector('label[data-i18n="skillLearn"]');
+        if (offerLabel) offerLabel.textContent = translations[currentLang].skillOffer;
+        if (learnLabel) learnLabel.textContent = translations[currentLang].skillLearn;
+        
+        // Update category options
+        const categorySelect = editModal.querySelector('#editCategory');
+        if (categorySelect) {
+            const options = categorySelect.querySelectorAll('option');
+            if (options[0]) options[0].textContent = translations[currentLang].categoryTech;
+            if (options[1]) options[1].textContent = translations[currentLang].categoryArt;
+            if (options[2]) options[2].textContent = translations[currentLang].categoryLang;
+            if (options[3]) options[3].textContent = translations[currentLang].categoryBusiness;
+            if (options[4]) options[4].textContent = translations[currentLang].categorySports;
+        }
     }
     
     if (document.getElementById('explore')?.style.display !== 'none') {
@@ -321,7 +398,137 @@ async function loadProfile() {
     loadMyFriends();
 }
 
-// --- 8. Profile Picture Upload with Compression (Supports up to 10MB original) ---
+// --- 8. Edit Profile Functions ---
+let currentUserData = {};
+
+async function showEditProfileModal() {
+    try {
+        const response = await fetch('/api/current_user');
+        currentUserData = await response.json();
+        
+        const userFromList = allUsers.find(u => u.id === currentUserData.id);
+        
+        document.getElementById('editUsername').value = currentUserData.username;
+        document.getElementById('editSkillOffer').value = userFromList?.skillOffer || '';
+        document.getElementById('editSkillLearn').value = userFromList?.skillLearn || '';
+        document.getElementById('editCategory').value = currentUserData.category || 'tech';
+        
+        document.getElementById('editProfileModal').style.display = 'flex';
+    } catch(e) {
+        console.error('Error loading profile data:', e);
+    }
+}
+
+function closeEditProfileModal() {
+    document.getElementById('editProfileModal').style.display = 'none';
+}
+
+async function saveProfileChanges() {
+    const newUsername = document.getElementById('editUsername').value.trim();
+    const newSkillOffer = document.getElementById('editSkillOffer').value.trim();
+    const newSkillLearn = document.getElementById('editSkillLearn').value.trim();
+    const newCategory = document.getElementById('editCategory').value;
+    
+    if (!newUsername) {
+        alert(currentLang === 'ar' ? 'الرجاء إدخال اسم المستخدم' : 'Please enter a username');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/update_profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: newUsername,
+                skillOffer: newSkillOffer,
+                skillLearn: newSkillLearn,
+                category: newCategory
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(currentLang === 'ar' ? '✓ تم تحديث الملف الشخصي بنجاح' : '✓ Profile updated successfully');
+            closeEditProfileModal();
+            loadProfile();
+            updateExplore();
+        } else {
+            alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+        }
+    } catch(err) {
+        alert(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error');
+    }
+}
+
+// --- 9. Delete Account Functions ---
+function showDeleteAccountModal() {
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    document.getElementById('confirmDeleteUsername').value = '';
+}
+
+async function deleteAccount() {
+    const username = document.getElementById('confirmDeleteUsername').value;
+    
+    if (!username) {
+        alert(currentLang === 'ar' ? 'الرجاء كتابة اسم المستخدم للتأكيد' : 'Please enter your username to confirm');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/delete_account', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(currentLang === 'ar' ? 'تم حذف الحساب بنجاح. وداعاً!' : 'Account deleted successfully. Goodbye!');
+            window.location.href = '/';
+        } else {
+            alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+        }
+    } catch(err) {
+        alert(currentLang === 'ar' ? 'خطأ في الشبكة. الرجاء المحاولة مرة أخرى' : 'Network error. Please try again.');
+    }
+}
+
+// --- 10. Block/Unblock Functions ---
+async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
+    if (isCurrentlyBlocked) {
+        const confirmed = confirm(currentLang === 'ar' ? `إلغاء حظر ${username}؟` : `Unblock ${username}?`);
+        if (confirmed) {
+            const response = await fetch(`/api/unblock_user/${userId}`, { method: 'POST' });
+            const data = await response.json();
+            if (data.success) {
+                alert(currentLang === 'ar' ? `✓ تم إلغاء حظر ${username}` : `✓ ${username} unblocked`);
+                updateExplore();
+            } else {
+                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+            }
+        }
+    } else {
+        const confirmed = confirm(currentLang === 'ar' ? `هل أنت متأكد من حظر ${username}؟\nلن تتمكن من رؤية رسائله أو التواصل معه.` : `Are you sure you want to block ${username}?\nYou won't be able to see their messages or communicate with them.`);
+        if (confirmed) {
+            const response = await fetch(`/api/block_user/${userId}`, { method: 'POST' });
+            const data = await response.json();
+            if (data.success) {
+                alert(currentLang === 'ar' ? `✓ تم حظر ${username}` : `✓ ${username} blocked`);
+                updateExplore();
+            } else {
+                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+            }
+        }
+    }
+}
+
+// --- 11. Profile Picture Upload with Compression ---
 function compressImage(file, maxSizeMB = 2) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -334,7 +541,6 @@ function compressImage(file, maxSizeMB = 2) {
                 let width = img.width;
                 let height = img.height;
                 
-                // Reduce size if too large (max 800px)
                 const maxWidth = 800;
                 const maxHeight = 800;
                 
@@ -352,7 +558,6 @@ function compressImage(file, maxSizeMB = 2) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
                 
-                // Compress to JPEG with 0.7 quality (lower quality = smaller size)
                 canvas.toBlob((blob) => {
                     resolve(blob);
                 }, 'image/jpeg', 0.7);
@@ -372,7 +577,6 @@ document.getElementById('profilePicInput')?.addEventListener('change', async fun
         return;
     }
     
-    // Allow original file up to 10MB (will be compressed)
     if (file.size > 10 * 1024 * 1024) {
         document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Image too large (max 10MB original)</span>';
         return;
@@ -381,13 +585,11 @@ document.getElementById('profilePicInput')?.addEventListener('change', async fun
     document.getElementById('uploadStatus').innerHTML = '<span style="color: var(--accent);"><i class="fas fa-spinner fa-spin"></i> Compressing image...</span>';
     
     try {
-        // Compress the image
         const compressedBlob = await compressImage(file);
         
         console.log(`📸 Original size: ${(file.size / 1024).toFixed(2)} KB`);
         console.log(`📸 Compressed size: ${(compressedBlob.size / 1024).toFixed(2)} KB`);
         
-        // Check compressed size (max 2MB)
         if (compressedBlob.size > 2 * 1024 * 1024) {
             document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Image too large even after compression (max 2MB)</span>';
             return;
@@ -395,7 +597,6 @@ document.getElementById('profilePicInput')?.addEventListener('change', async fun
         
         document.getElementById('uploadStatus').innerHTML = '<span style="color: var(--accent);"><i class="fas fa-spinner fa-spin"></i> Uploading...</span>';
         
-        // Convert to base64
         const reader = new FileReader();
         reader.onloadend = async function() {
             const base64String = reader.result;
@@ -424,7 +625,7 @@ document.getElementById('profilePicInput')?.addEventListener('change', async fun
     e.target.value = '';
 });
 
-// --- 9. My Friends List ---
+// --- 12. My Friends List ---
 async function loadMyFriends() {
     try {
         const response = await fetch('/api/my_friends');
@@ -481,7 +682,7 @@ function viewFriendProfile(friendId) {
     }
 }
 
-// --- 10. Incoming Requests ---
+// --- 13. Incoming Requests ---
 async function loadIncomingRequests() {
     const res = await fetch('/api/my_requests');
     const requests = await res.json();
@@ -517,7 +718,7 @@ async function handleFriendRequest(reqId, action) {
     }
 }
 
-// --- 11. My Reviews ---
+// --- 14. My Reviews ---
 async function loadMyReviews() {
     const container = document.getElementById('myReviews');
     if (!container) return;
@@ -550,7 +751,7 @@ async function loadMyReviews() {
     }
 }
 
-// --- 12. Generate Stars ---
+// --- 15. Generate Stars ---
 function generateStars(rating) {
     const full = Math.floor(rating);
     const half = rating % 1 >= 0.5;
@@ -561,7 +762,7 @@ function generateStars(rating) {
     return stars;
 }
 
-// --- 13. Explore Users with Search, Filter, Pagination ---
+// --- 16. Explore Users with Search, Filter, Pagination ---
 async function updateExplore() {
     try {
         const response = await fetch('/api/users');
@@ -639,11 +840,20 @@ function changePage(delta) {
 
 function getActionButton(user) {
     if (user.relationship === 'accepted') {
-        return `<button onclick="openChat(${user.id}, '${escapeHtml(user.username)}')" class="chat-btn"><i class="fas fa-comment"></i> ${translations[currentLang].btnChat}</button>`;
+        return `
+            <div style="display: flex; gap: 8px; width: 100%;">
+                <button onclick="openChat(${user.id}, '${escapeHtml(user.username)}')" class="chat-btn" style="flex: 2; background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                    <i class="fas fa-comment"></i> ${translations[currentLang].btnChat}
+                </button>
+                <button onclick="toggleBlockUser(${user.id}, '${escapeHtml(user.username)}', ${user.is_blocked || false})" class="block-btn" style="flex: 1; background: ${user.is_blocked ? '#10b981' : '#ef4444'}; color: white; border: none; border-radius: 30px; cursor: pointer; transition: all 0.3s;">
+                    <i class="fas ${user.is_blocked ? 'fa-check' : 'fa-ban'}"></i> ${user.is_blocked ? translations[currentLang].unblock : translations[currentLang].block}
+                </button>
+            </div>
+        `;
     } else if (user.relationship === 'pending') {
-        return `<button disabled class="pending-btn"><i class="fas fa-clock"></i> ${translations[currentLang].btnPending}</button>`;
+        return `<button disabled class="pending-btn" style="background: #9ca3af; color: white; border: none; padding: 10px; border-radius: 30px; width: 100%;">${translations[currentLang].btnPending}</button>`;
     } else {
-        return `<button onclick="sendFriendRequest(${user.id})" class="add-btn"><i class="fas fa-user-plus"></i> ${translations[currentLang].btnAdd}</button>`;
+        return `<button onclick="sendFriendRequest(${user.id})" class="add-btn" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.3s;"><i class="fas fa-user-plus"></i> ${translations[currentLang].btnAdd}</button>`;
     }
 }
 
@@ -657,7 +867,7 @@ async function sendFriendRequest(userId) {
     }
 }
 
-// --- 14. Escape HTML for Security (XSS Protection) ---
+// --- 17. Escape HTML for Security (XSS Protection) ---
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -668,7 +878,7 @@ function escapeHtml(str) {
     });
 }
 
-// --- 15. Chat System ---
+// --- 18. Chat System ---
 async function openChat(userId, userName) {
     activeChatId = userId;
     document.getElementById('chatWith').innerText = userName;
@@ -736,7 +946,7 @@ async function sendMessage() {
     }
 }
 
-// --- 16. Contact Form ---
+// --- 19. Contact Form ---
 document.addEventListener('submit', async (e) => {
     if (e.target.id === 'contactForm') {
         e.preventDefault();
@@ -774,7 +984,7 @@ document.addEventListener('submit', async (e) => {
     }
 });
 
-// --- 17. Password Confirmation on Signup ---
+// --- 20. Password Confirmation on Signup ---
 document.getElementById('signupForm')?.addEventListener('submit', function(e) {
     const pwd = document.getElementById('signupPassword')?.value;
     const confirm = document.getElementById('confirmPassword')?.value;
@@ -788,14 +998,14 @@ document.getElementById('signupForm')?.addEventListener('submit', function(e) {
     }
 });
 
-// --- 18. Enter key for chat ---
+// --- 21. Enter key for chat ---
 document.addEventListener('keypress', (e) => {
     if (e.key === 'Enter' && document.activeElement?.id === 'chatInput') {
         sendMessage();
     }
 });
 
-// --- 19. Home Page Search ---
+// --- 22. Home Page Search ---
 function homeSearch() {
     const searchTerm = document.getElementById('homeSearch')?.value || '';
     const category = document.getElementById('homeCategory')?.value || 'all';
@@ -823,7 +1033,7 @@ document.getElementById('homeSearch')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') homeSearch();
 });
 
-// --- 20. Admin Messages Functions ---
+// --- 23. Admin Messages Functions ---
 async function loadAdminMessages() {
     try {
         const response = await fetch('/api/contact_messages');
@@ -930,8 +1140,15 @@ function refreshAdminMessages() {
 window.refreshAdminMessages = refreshAdminMessages;
 window.loadMyFriends = loadMyFriends;
 window.viewFriendProfile = viewFriendProfile;
+window.toggleBlockUser = toggleBlockUser;
+window.showDeleteAccountModal = showDeleteAccountModal;
+window.closeDeleteModal = closeDeleteModal;
+window.deleteAccount = deleteAccount;
+window.showEditProfileModal = showEditProfileModal;
+window.closeEditProfileModal = closeEditProfileModal;
+window.saveProfileChanges = saveProfileChanges;
 
-// --- 21. Initialize on DOM Load ---
+// --- 24. Initialize on DOM Load ---
 document.addEventListener('DOMContentLoaded', () => {
     // Set up search listeners
     const searchInput = document.getElementById('searchInput');
