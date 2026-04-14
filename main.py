@@ -444,6 +444,25 @@ def delete_account():
         return jsonify({"success": False, "error": str(e)}), 500
 
 # ============================================
+# User Skills API (for profile page)
+# ============================================
+
+@app.route('/api/user_skills/<int:user_id>')
+@login_required
+def get_user_skills(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    offer = Skill.query.filter_by(user_id=user_id, type='offer').first()
+    learn = Skill.query.filter_by(user_id=user_id, type='request').first()
+    
+    return jsonify({
+        "skillOffer": offer.title if offer else "Not specified",
+        "skillLearn": learn.title if learn else "Not specified"
+    })
+
+# ============================================
 # Contact Messages (Database + Email)
 # ============================================
 
