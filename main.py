@@ -45,7 +45,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
-    profile_pic = db.Column(db.String(10000), default='https://cdn-icons-png.flaticon.com/512/149/149071.png')
+    profile_pic = db.Column(db.Text, default='https://cdn-icons-png.flaticon.com/512/149/149071.png')
     category = db.Column(db.String(50), default='tech')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
