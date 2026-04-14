@@ -262,7 +262,7 @@
         <div class="pagination" id="pagination"></div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- Contact Section with Site Rating -->
     <section id="contact">
         <div class="section-header"><h2 data-i18n="contactTitle">Contact Us</h2></div>
         <div class="card-container">
@@ -271,6 +271,29 @@
                 <textarea id="contactMessage" data-i18n-placeholder="message" placeholder="Message" style="width:100%; border-radius:15px; padding:15px; border:1px solid #ddd; margin-bottom:15px; min-height:100px; outline:none;"></textarea>
                 <button type="submit" data-i18n="btnSend">Send Message</button>
             </form>
+        </div>
+        
+        <!-- Site Rating Section -->
+        <div class="card-container" style="margin-top: 30px; text-align: center;">
+            <h3 style="margin-bottom: 15px;">
+                <i class="fas fa-star" style="color: #f59e0b;"></i>
+                <span data-i18n="rateOurSite">Rate Our Site</span>
+            </h3>
+            <p style="margin-bottom: 15px; color: var(--text-muted);" data-i18n="rateHelp">Your feedback helps us improve!</p>
+            <div id="siteRatingStars" style="display: flex; justify-content: center; gap: 12px; margin-bottom: 15px;">
+                <i class="far fa-star" data-site-rating="1" style="font-size: 40px; cursor: pointer; transition: all 0.2s;"></i>
+                <i class="far fa-star" data-site-rating="2" style="font-size: 40px; cursor: pointer; transition: all 0.2s;"></i>
+                <i class="far fa-star" data-site-rating="3" style="font-size: 40px; cursor: pointer; transition: all 0.2s;"></i>
+                <i class="far fa-star" data-site-rating="4" style="font-size: 40px; cursor: pointer; transition: all 0.2s;"></i>
+                <i class="far fa-star" data-site-rating="5" style="font-size: 40px; cursor: pointer; transition: all 0.2s;"></i>
+            </div>
+            <div id="siteRatingMessage" style="font-size: 14px;"></div>
+            <div id="averageSiteRating" style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 12px;">
+                <span data-i18n="averageRating">Average Rating</span>: 
+                <span id="avgRatingValue">0.00</span>
+                <span id="avgRatingStars" style="margin-left: 10px;"></span>
+                <span id="ratingCount" style="margin-left: 10px; font-size: 12px;">(0 votes)</span>
+            </div>
         </div>
     </section>
 
@@ -340,6 +363,31 @@
         <div style="display:flex; gap:10px; justify-content:center;">
             <button onclick="closeEditProfileModal()" style="background:transparent; border:1px solid var(--border); padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="cancel">Cancel</button>
             <button onclick="saveProfileChanges()" style="background:linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="save">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div id="reviewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
+    <div style="background:var(--bg-card); backdrop-filter:blur(24px); border-radius:24px; padding:30px; max-width:450px; width:90%; border:1px solid var(--border);">
+        <h3 style="margin-bottom:20px; text-align:center;" data-i18n="rateUser">Rate User</h3>
+        
+        <div style="text-align:center; margin-bottom:20px;">
+            <p id="reviewUserName" style="font-weight:600; margin-bottom:15px;"></p>
+            <div id="ratingStars" style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+                <i class="far fa-star" data-rating="1" style="font-size:32px; cursor:pointer; transition:all 0.2s;"></i>
+                <i class="far fa-star" data-rating="2" style="font-size:32px; cursor:pointer; transition:all 0.2s;"></i>
+                <i class="far fa-star" data-rating="3" style="font-size:32px; cursor:pointer; transition:all 0.2s;"></i>
+                <i class="far fa-star" data-rating="4" style="font-size:32px; cursor:pointer; transition:all 0.2s;"></i>
+                <i class="far fa-star" data-rating="5" style="font-size:32px; cursor:pointer; transition:all 0.2s;"></i>
+            </div>
+            <input type="hidden" id="selectedRating" value="0">
+            <textarea id="reviewComment" data-i18n-placeholder="writeReview" placeholder="Write your review..." style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main); margin-bottom:20px; min-height:80px;"></textarea>
+        </div>
+        
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="closeReviewModal()" style="background:transparent; border:1px solid var(--border); padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="cancel">Cancel</button>
+            <button onclick="submitReview()" style="background:linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="submitReview">Submit Review</button>
         </div>
     </div>
 </div>
@@ -670,27 +718,42 @@
     }
 
     // ============================================
-    // User Skills Functions
+    // User Skills Functions (FIXED - uses dedicated API)
     // ============================================
     
     async function loadUserSkills() {
         try {
-            const response = await fetch('/api/current_user');
-            const user = await response.json();
-            
-            const userSkills = allUsers.find(u => u.id === user.id);
-            
-            document.getElementById('profileSkillOffer').innerHTML = escapeHtml(userSkills?.skillOffer || 'Not specified');
-            document.getElementById('profileSkillLearn').innerHTML = escapeHtml(userSkills?.skillLearn || 'Not specified');
+            // 1. Get current user ID
+            const userRes = await fetch('/api/current_user');
+            if (!userRes.ok) throw new Error('Failed to fetch current user');
+            const user = await userRes.json();
+
+            // 2. Fetch skills for this specific user from the backend
+            const skillsRes = await fetch(`/api/user_skills/${user.id}`);
+            if (!skillsRes.ok) throw new Error('Failed to fetch user skills');
+            const skills = await skillsRes.json();
+
+            // 3. Update the HTML elements
+            const offerElement = document.getElementById('profileSkillOffer');
+            const learnElement = document.getElementById('profileSkillLearn');
+
+            if (offerElement) {
+                offerElement.innerHTML = escapeHtml(skills.skillOffer || 'Not specified');
+            }
+            if (learnElement) {
+                learnElement.innerHTML = escapeHtml(skills.skillLearn || 'Not specified');
+            }
         } catch(e) {
             console.error('Error loading skills:', e);
-            document.getElementById('profileSkillOffer').innerHTML = 'Error loading';
-            document.getElementById('profileSkillLearn').innerHTML = 'Error loading';
+            const offerElement = document.getElementById('profileSkillOffer');
+            const learnElement = document.getElementById('profileSkillLearn');
+            if (offerElement) offerElement.innerHTML = 'Error loading';
+            if (learnElement) learnElement.innerHTML = 'Error loading';
         }
     }
 
     // ============================================
-    // My Friends Functions
+    // My Friends Functions (with Rate button)
     // ============================================
     
     async function loadMyFriends() {
@@ -711,7 +774,7 @@
             if (friends.length === 0) {
                 container.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--text-muted);">
                     <i class="fas fa-user-friends" style="font-size: 40px; margin-bottom: 10px; display: block;"></i>
-                    <span data-i18n="noFriendsYet">No friends yet. Explore and add some!</span>
+                    <span data-i18n="noFriendsYet">${translations[currentLang].noFriendsYet}</span>
                 </div>`;
                 return;
             }
@@ -728,7 +791,10 @@
                     </div>
                     <div style="display: flex; gap: 8px;">
                         <button onclick="openChat(${friend.id}, '${escapeHtml(friend.username)}')" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 8px 16px; border-radius: 25px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
-                            <i class="fas fa-comment"></i> Chat
+                            <i class="fas fa-comment"></i> ${translations[currentLang].btnChat}
+                        </button>
+                        <button onclick="showReviewModal(${friend.id}, '${escapeHtml(friend.username)}')" style="background: transparent; border: 1px solid var(--border); padding: 8px 12px; border-radius: 25px; cursor: pointer; font-size: 12px;">
+                            <i class="fas fa-star"></i> Rate
                         </button>
                         <button onclick="viewFriendProfile(${friend.id})" style="background: transparent; border: 1px solid var(--border); padding: 8px 12px; border-radius: 25px; cursor: pointer; font-size: 12px;">
                             <i class="fas fa-user"></i>
@@ -745,8 +811,213 @@
     function viewFriendProfile(friendId) {
         const friend = allUsers.find(u => u.id === friendId);
         if (friend) {
-            alert(`${friend.username}\n📤 Offers: ${friend.skillOffer}\n📥 Wants: ${friend.skillLearn}\n⭐ Rating: ${(friend.rating || 0).toFixed(1)}/5`);
+            alert(`${friend.username}\n📤 ${translations[currentLang].lblOffers}: ${friend.skillOffer}\n📥 ${translations[currentLang].lblWants}: ${friend.skillLearn}\n⭐ Rating: ${(friend.rating || 0).toFixed(1)}/5`);
         }
+    }
+
+    // ============================================
+    // Review System Functions
+    // ============================================
+    
+    let currentReviewUserId = null;
+    let currentReviewUserName = '';
+
+    function initRatingStars() {
+        const stars = document.querySelectorAll('#ratingStars i');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                document.getElementById('selectedRating').value = rating;
+                
+                stars.forEach(s => {
+                    const starRating = parseInt(s.getAttribute('data-rating'));
+                    if (starRating <= rating) {
+                        s.className = 'fas fa-star';
+                        s.style.color = '#f59e0b';
+                    } else {
+                        s.className = 'far fa-star';
+                        s.style.color = '';
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                stars.forEach(s => {
+                    const starRating = parseInt(s.getAttribute('data-rating'));
+                    if (starRating <= rating) {
+                        s.className = 'fas fa-star';
+                        s.style.color = '#f59e0b';
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseleave', function() {
+                const selectedRating = parseInt(document.getElementById('selectedRating').value);
+                stars.forEach(s => {
+                    const starRating = parseInt(s.getAttribute('data-rating'));
+                    if (selectedRating > 0 && starRating <= selectedRating) {
+                        s.className = 'fas fa-star';
+                        s.style.color = '#f59e0b';
+                    } else {
+                        s.className = 'far fa-star';
+                        s.style.color = '';
+                    }
+                });
+            });
+        });
+    }
+
+    function showReviewModal(userId, userName) {
+        currentReviewUserId = userId;
+        currentReviewUserName = userName;
+        document.getElementById('reviewUserName').innerText = userName;
+        document.getElementById('selectedRating').value = 0;
+        document.getElementById('reviewComment').value = '';
+        
+        const stars = document.querySelectorAll('#ratingStars i');
+        stars.forEach(star => {
+            star.className = 'far fa-star';
+            star.style.color = '';
+        });
+        
+        document.getElementById('reviewModal').style.display = 'flex';
+    }
+
+    function closeReviewModal() {
+        document.getElementById('reviewModal').style.display = 'none';
+        currentReviewUserId = null;
+    }
+
+    async function submitReview() {
+        const rating = document.getElementById('selectedRating').value;
+        const comment = document.getElementById('reviewComment').value;
+        
+        if (!rating || rating === '0') {
+            alert(currentLang === 'ar' ? 'الرجاء اختيار تقييم' : 'Please select a rating');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/submit_review/${currentReviewUserId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rating: parseInt(rating), comment: comment })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(currentLang === 'ar' ? '✓ تم إرسال تقييمك بنجاح' : '✓ Review submitted successfully');
+                closeReviewModal();
+                loadProfile();
+            } else {
+                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+            }
+        } catch(err) {
+            alert(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error');
+        }
+    }
+
+    // ============================================
+    // Site Rating Functions
+    // ============================================
+    
+    let selectedSiteRating = 0;
+
+    async function loadSiteRating() {
+        try {
+            const response = await fetch('/api/site_rating');
+            const data = await response.json();
+            
+            const avgRating = data.average_rating || 0;
+            const ratingCount = data.rating_count || 0;
+            
+            document.getElementById('avgRatingValue').innerText = avgRating.toFixed(1);
+            document.getElementById('ratingCount').innerText = `(${ratingCount} votes)`;
+            
+            const avgStarsContainer = document.getElementById('avgRatingStars');
+            if (avgStarsContainer) {
+                avgStarsContainer.innerHTML = generateStars(avgRating);
+            }
+            
+            if (data.user_rated) {
+                document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">✓ Thank you for your rating!</span>';
+                const stars = document.querySelectorAll('#siteRatingStars i');
+                stars.forEach(star => {
+                    star.style.cursor = 'default';
+                    star.style.opacity = '0.5';
+                });
+            }
+        } catch(e) {
+            console.error('Error loading site rating:', e);
+        }
+    }
+
+    function initSiteRatingStars() {
+        const stars = document.querySelectorAll('#siteRatingStars i');
+        stars.forEach(star => {
+            star.addEventListener('click', async function() {
+                const checkResponse = await fetch('/api/site_rating');
+                const checkData = await checkResponse.json();
+                if (checkData.user_rated) {
+                    alert(currentLang === 'ar' ? 'لقد قمت بتقييم الموقع بالفعل! شكراً لك' : 'You have already rated the site! Thank you');
+                    return;
+                }
+                
+                const rating = parseInt(this.getAttribute('data-site-rating'));
+                selectedSiteRating = rating;
+                
+                const response = await fetch('/api/site_rating', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rating: rating })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">✓ Thank you for your rating!</span>';
+                    
+                    stars.forEach(s => {
+                        s.style.cursor = 'default';
+                        s.style.opacity = '0.5';
+                        const starRating = parseInt(s.getAttribute('data-site-rating'));
+                        if (starRating <= rating) {
+                            s.className = 'fas fa-star';
+                            s.style.color = '#f59e0b';
+                        } else {
+                            s.className = 'far fa-star';
+                            s.style.color = '';
+                        }
+                    });
+                    
+                    loadSiteRating();
+                } else {
+                    alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+                }
+            });
+            
+            star.addEventListener('mouseenter', function() {
+                if (document.querySelector('#siteRatingMessage span')?.innerText.includes('Thank you')) return;
+                const rating = parseInt(this.getAttribute('data-site-rating'));
+                stars.forEach(s => {
+                    const starRating = parseInt(s.getAttribute('data-site-rating'));
+                    if (starRating <= rating) {
+                        s.className = 'fas fa-star';
+                        s.style.color = '#f59e0b';
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseleave', function() {
+                if (document.querySelector('#siteRatingMessage span')?.innerText.includes('Thank you')) return;
+                stars.forEach(s => {
+                    s.className = 'far fa-star';
+                    s.style.color = '';
+                });
+            });
+        });
     }
 
     // ============================================
@@ -1164,6 +1435,10 @@
         } else {
             showSection('home', document.querySelector('nav button'));
         }
+        
+        initRatingStars();
+        initSiteRatingStars();
+        loadSiteRating();
     });
 </script>
 </body>
