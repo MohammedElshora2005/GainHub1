@@ -133,6 +133,16 @@ class ContactMessage(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_read = db.Column(db.Boolean, default=False)
 
+class SiteRating(db.Model):
+    __tablename__ = 'site_ratings'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)  # 1-5
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (db.UniqueConstraint('user_id', name='unique_user_site_rating'),)
+
 # ============================================
 # Helper Functions
 # ============================================
@@ -341,6 +351,123 @@ def get_current_user():
     })
 
 # ============================================
+# Site Rating Routes (with Email Notification)
+# ============================================
+
+def send_site_rating_email(username, user_email, rating):
+    """Helper function to send email notification for site rating"""
+    if not EMAIL_USER or not EMAIL_PASS:
+        print("⚠️ Email credentials missing. Cannot send email.")
+        return False
+    
+    try:
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_USER
+        msg['To'] = EMAIL_USER  # Send to admin (you)
+        msg['Subject'] = f"⭐ New Site Rating on Gainhub - {rating} Stars"
+        
+        # Get star representation
+        stars = '★' * rating + '☆' * (5 - rating)
+        
+        # Email body
+        body = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px;">
+                <div style="background: white; border-radius: 15px; padding: 25px;">
+                    <h2 style="color: #667eea; margin-bottom: 20px;">✨ New Site Rating!</h2>
+                    
+                    <div style="background: #f5f5f5; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                        <p style="margin: 5px 0;"><strong>👤 User:</strong> {username}</p>
+                        <p style="margin: 5px 0;"><strong>📧 Email:</strong> {user_email}</p>
+                        <p style="margin: 5px 0;"><strong>⭐ Rating:</strong> {rating}/5 ({stars})</p>
+                        <p style="margin: 5px 0;"><strong>🕐 Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 15px;">
+                        <span style="font-size: 30px;">{'⭐' * rating}</span>
+                    </div>
+                    
+                    <hr style="border: 1px solid #ddd;">
+                    <small style="color: #888;">📬 Sent from Gainhub Site Rating System</small>
+                    <br>
+                    <small style="color: #888;">💡 You can view all ratings in the admin panel</small>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        msg.attach(MIMEText(body, 'html'))
+        
+        # Send email
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as server:
+            server.starttls()
+            server.login(EMAIL_USER, EMAIL_PASS)
+            server.send_message(msg)
+        
+        print(f"✅ Site rating email sent to {EMAIL_USER} - Rating: {rating}/5")
+        return True
+        
+    except smtplib.SMTPAuthenticationError:
+        print("❌ Email authentication failed! Check your EMAIL_USER and EMAIL_PASS in .env")
+        return False
+    except smtplib.SMTPException as e:
+        print(f"❌ SMTP error: {e}")
+        return False
+    except Exception as e:
+        print(f"❌ Failed to send email: {e}")
+        return False
+
+@app.route('/api/site_rating', methods=['GET', 'POST'])
+def site_rating_api():
+    if request.method == 'GET':
+        # Get average rating
+        ratings = SiteRating.query.all()
+        avg_rating = sum(r.rating for r in ratings) / len(ratings) if ratings else 0
+        
+        user_rated = False
+        if current_user.is_authenticated:
+            user_rating = SiteRating.query.filter_by(user_id=current_user.id).first()
+            user_rated = user_rating is not None
+        
+        return jsonify({
+            "average_rating": avg_rating,
+            "rating_count": len(ratings),
+            "user_rated": user_rated
+        })
+    
+    # POST - submit rating
+    if not current_user.is_authenticated:
+        return jsonify({"success": False, "error": "Please login to rate"}), 401
+    
+    data = request.get_json()
+    rating = data.get('rating')
+    
+    if not rating or not 1 <= rating <= 5:
+        return jsonify({"success": False, "error": "Invalid rating"}), 400
+    
+    # Check if already rated
+    existing = SiteRating.query.filter_by(user_id=current_user.id).first()
+    if existing:
+        return jsonify({"success": False, "error": "You have already rated the site"}), 400
+    
+    # Save to database
+    new_rating = SiteRating(user_id=current_user.id, rating=rating)
+    db.session.add(new_rating)
+    db.session.commit()
+    print(f"💾 Site rating saved to database - User: {current_user.username}, Rating: {rating}/5")
+    
+    # Send email notification
+    email_sent = send_site_rating_email(current_user.username, current_user.email, rating)
+    
+    if email_sent:
+        return jsonify({"success": True, "message": "Thank you for your rating! Your feedback has been sent."})
+    else:
+        return jsonify({"success": True, "message": "Thank you for your rating! (Email notification failed, but we received your rating.)"})
+
+# ============================================
 # Edit Profile
 # ============================================
 
@@ -430,6 +557,9 @@ def delete_account():
         ).delete(synchronize_session=False)
         
         Skill.query.filter_by(user_id=current_user.id).delete(synchronize_session=False)
+        
+        # Delete site ratings
+        SiteRating.query.filter_by(user_id=current_user.id).delete(synchronize_session=False)
         
         # Delete user
         db.session.delete(current_user)
