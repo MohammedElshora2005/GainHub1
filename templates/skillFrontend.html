@@ -161,6 +161,26 @@
             
         </div>
         
+        <!-- My Skills Section -->
+        <div class="card-container" style="margin-top:20px;">
+            <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <i class="fas fa-code" style="color: var(--accent);"></i>
+                <span data-i18n="mySkills">My Skills</span>
+            </h3>
+            <div id="mySkillsList" style="text-align: center;">
+                <div class="skills-wrapper" style="background: rgba(255,255,255,0.3); border-radius: 16px; padding: 15px;">
+                    <div class="skill-badge" style="margin-bottom: 12px;">
+                        <span>📤 <span data-i18n="lblOffers">Offers</span></span>
+                        <strong id="profileSkillOffer" style="display: block; margin-top: 5px;">Loading...</strong>
+                    </div>
+                    <div class="skill-badge">
+                        <span>📥 <span data-i18n="lblWants">Wants</span></span>
+                        <strong id="profileSkillLearn" style="display: block; margin-top: 5px;">Loading...</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Second Row: Reviews and Requests -->
         <div class="profile-two-columns">
             
@@ -650,6 +670,26 @@
     }
 
     // ============================================
+    // User Skills Functions
+    // ============================================
+    
+    async function loadUserSkills() {
+        try {
+            const response = await fetch('/api/current_user');
+            const user = await response.json();
+            
+            const userSkills = allUsers.find(u => u.id === user.id);
+            
+            document.getElementById('profileSkillOffer').innerHTML = escapeHtml(userSkills?.skillOffer || 'Not specified');
+            document.getElementById('profileSkillLearn').innerHTML = escapeHtml(userSkills?.skillLearn || 'Not specified');
+        } catch(e) {
+            console.error('Error loading skills:', e);
+            document.getElementById('profileSkillOffer').innerHTML = 'Error loading';
+            document.getElementById('profileSkillLearn').innerHTML = 'Error loading';
+        }
+    }
+
+    // ============================================
     // My Friends Functions
     // ============================================
     
@@ -845,6 +885,7 @@
         loadMyReviews();
         loadAdminMessages();
         loadMyFriends();
+        loadUserSkills();
     }
 
     async function loadIncomingRequests() {
