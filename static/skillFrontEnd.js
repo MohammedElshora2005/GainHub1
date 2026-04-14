@@ -1,6 +1,6 @@
 // ============================================
 // Gainhub - Main JavaScript File
-// All improvements included: Search, Filter, Pagination, Dark Mode, Reviews, Admin Messages, Friends List, Block/Unblock, Delete Account, Edit Profile
+// All improvements included: Search, Filter, Pagination, Dark Mode, Reviews, Admin Messages, Friends List, Block/Unblock, Delete Account, Edit Profile, User Skills
 // ============================================
 
 // --- 1. Global Variables ---
@@ -105,7 +105,8 @@ const translations = {
         username: "Username",
         category: "Category",
         save: "Save Changes",
-        edit: "Edit"
+        edit: "Edit",
+        mySkills: "My Skills"
     },
     ar: {
         langBtn: "🌐 English",
@@ -178,7 +179,8 @@ const translations = {
         username: "اسم المستخدم",
         category: "التصنيف",
         save: "حفظ التغييرات",
-        edit: "تعديل"
+        edit: "تعديل",
+        mySkills: "مهاراتي"
     }
 };
 
@@ -396,9 +398,42 @@ async function loadProfile() {
     loadMyReviews();
     loadAdminMessages();
     loadMyFriends();
+    loadUserSkills();
 }
 
-// --- 8. Edit Profile Functions ---
+// --- 8. User Skills Functions (FIXED - uses dedicated API) ---
+async function loadUserSkills() {
+    try {
+        // 1. Get current user ID
+        const userRes = await fetch('/api/current_user');
+        if (!userRes.ok) throw new Error('Failed to fetch current user');
+        const user = await userRes.json();
+
+        // 2. Fetch skills for this specific user from the backend
+        const skillsRes = await fetch(`/api/user_skills/${user.id}`);
+        if (!skillsRes.ok) throw new Error('Failed to fetch user skills');
+        const skills = await skillsRes.json();
+
+        // 3. Update the HTML elements
+        const offerElement = document.getElementById('profileSkillOffer');
+        const learnElement = document.getElementById('profileSkillLearn');
+
+        if (offerElement) {
+            offerElement.innerHTML = escapeHtml(skills.skillOffer || 'Not specified');
+        }
+        if (learnElement) {
+            learnElement.innerHTML = escapeHtml(skills.skillLearn || 'Not specified');
+        }
+    } catch(e) {
+        console.error('Error loading skills:', e);
+        const offerElement = document.getElementById('profileSkillOffer');
+        const learnElement = document.getElementById('profileSkillLearn');
+        if (offerElement) offerElement.innerHTML = 'Error loading';
+        if (learnElement) learnElement.innerHTML = 'Error loading';
+    }
+}
+
+// --- 9. Edit Profile Functions ---
 let currentUserData = {};
 
 async function showEditProfileModal() {
@@ -461,7 +496,7 @@ async function saveProfileChanges() {
     }
 }
 
-// --- 9. Delete Account Functions ---
+// --- 10. Delete Account Functions ---
 function showDeleteAccountModal() {
     document.getElementById('deleteModal').style.display = 'flex';
 }
@@ -499,7 +534,7 @@ async function deleteAccount() {
     }
 }
 
-// --- 10. Block/Unblock Functions ---
+// --- 11. Block/Unblock Functions ---
 async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
     if (isCurrentlyBlocked) {
         const confirmed = confirm(currentLang === 'ar' ? `إلغاء حظر ${username}؟` : `Unblock ${username}?`);
@@ -528,7 +563,7 @@ async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
     }
 }
 
-// --- 11. Profile Picture Upload with Compression ---
+// --- 12. Profile Picture Upload with Compression ---
 function compressImage(file, maxSizeMB = 2) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -625,7 +660,7 @@ document.getElementById('profilePicInput')?.addEventListener('change', async fun
     e.target.value = '';
 });
 
-// --- 12. My Friends List ---
+// --- 13. My Friends List ---
 async function loadMyFriends() {
     try {
         const response = await fetch('/api/my_friends');
@@ -682,7 +717,7 @@ function viewFriendProfile(friendId) {
     }
 }
 
-// --- 13. Incoming Requests ---
+// --- 14. Incoming Requests ---
 async function loadIncomingRequests() {
     const res = await fetch('/api/my_requests');
     const requests = await res.json();
@@ -718,7 +753,7 @@ async function handleFriendRequest(reqId, action) {
     }
 }
 
-// --- 14. My Reviews ---
+// --- 15. My Reviews ---
 async function loadMyReviews() {
     const container = document.getElementById('myReviews');
     if (!container) return;
@@ -751,7 +786,7 @@ async function loadMyReviews() {
     }
 }
 
-// --- 15. Generate Stars ---
+// --- 16. Generate Stars ---
 function generateStars(rating) {
     const full = Math.floor(rating);
     const half = rating % 1 >= 0.5;
@@ -762,7 +797,7 @@ function generateStars(rating) {
     return stars;
 }
 
-// --- 16. Explore Users with Search, Filter, Pagination ---
+// --- 17. Explore Users with Search, Filter, Pagination ---
 async function updateExplore() {
     try {
         const response = await fetch('/api/users');
@@ -867,7 +902,7 @@ async function sendFriendRequest(userId) {
     }
 }
 
-// --- 17. Escape HTML for Security (XSS Protection) ---
+// --- 18. Escape HTML for Security (XSS Protection) ---
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -878,7 +913,7 @@ function escapeHtml(str) {
     });
 }
 
-// --- 18. Chat System ---
+// --- 19. Chat System ---
 async function openChat(userId, userName) {
     activeChatId = userId;
     document.getElementById('chatWith').innerText = userName;
@@ -946,7 +981,7 @@ async function sendMessage() {
     }
 }
 
-// --- 19. Contact Form ---
+// --- 20. Contact Form ---
 document.addEventListener('submit', async (e) => {
     if (e.target.id === 'contactForm') {
         e.preventDefault();
@@ -984,7 +1019,7 @@ document.addEventListener('submit', async (e) => {
     }
 });
 
-// --- 20. Password Confirmation on Signup ---
+// --- 21. Password Confirmation on Signup ---
 document.getElementById('signupForm')?.addEventListener('submit', function(e) {
     const pwd = document.getElementById('signupPassword')?.value;
     const confirm = document.getElementById('confirmPassword')?.value;
@@ -998,14 +1033,14 @@ document.getElementById('signupForm')?.addEventListener('submit', function(e) {
     }
 });
 
-// --- 21. Enter key for chat ---
+// --- 22. Enter key for chat ---
 document.addEventListener('keypress', (e) => {
     if (e.key === 'Enter' && document.activeElement?.id === 'chatInput') {
         sendMessage();
     }
 });
 
-// --- 22. Home Page Search ---
+// --- 23. Home Page Search ---
 function homeSearch() {
     const searchTerm = document.getElementById('homeSearch')?.value || '';
     const category = document.getElementById('homeCategory')?.value || 'all';
@@ -1033,7 +1068,7 @@ document.getElementById('homeSearch')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') homeSearch();
 });
 
-// --- 23. Admin Messages Functions ---
+// --- 24. Admin Messages Functions ---
 async function loadAdminMessages() {
     try {
         const response = await fetch('/api/contact_messages');
@@ -1148,7 +1183,7 @@ window.showEditProfileModal = showEditProfileModal;
 window.closeEditProfileModal = closeEditProfileModal;
 window.saveProfileChanges = saveProfileChanges;
 
-// --- 24. Initialize on DOM Load ---
+// --- 25. Initialize on DOM Load ---
 document.addEventListener('DOMContentLoaded', () => {
     // Set up search listeners
     const searchInput = document.getElementById('searchInput');
