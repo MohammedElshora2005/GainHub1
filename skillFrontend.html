@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gainhub - Connect & Learn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- CSS will be linked here -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='skillFrontEnd.css') }}">
+</head>
+<body>
+
+<div class="doodles-container">
+    <svg class="doodle doodle-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2v1"/><path d="M12 7a5 5 0 1 0-3 9v2c0 .6.4 1 1 1h4c.6 0 1-.4 1-1v-2a5 5 0 0 0-3-9z"/></svg>
+    <svg class="doodle doodle-2" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l2.5 9.5L24 12l-9.5 2.5L12 24l-2.5-9.5L0 12l9.5-2.5Z"/></svg>
+    <svg class="doodle doodle-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+    <svg class="doodle doodle-4" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4 L20 4 L22 8 L12 20 L2 8 Z"/></svg>
+</div>
+
+<header class="top-header">
+    <div class="logo">Gain<span>hub</span></div>
+    <nav id="navMenu">
+        <button onclick="showSection('home', this)" class="active" data-i18n="navHome">Home</button>
+        <button onclick="showSection('signup', this)" data-i18n="navSignup">Sign Up</button>
+        <button onclick="showSection('login', this)" data-i18n="navLogin">Login</button>
+        <button onclick="showSection('profile', this)" id="profileTabBtn" data-i18n="navProfile">Profile</button>
+        <button onclick="showSection('explore', this)" data-i18n="navExplore">Explore</button>
+        <button onclick="showSection('contact', this)" data-i18n="navContact">Contact</button>
+    </nav>
+    <div class="header-controls">
+        <button class="dark-toggle" onclick="toggleDarkMode()" id="darkModeBtn"><i class="fas fa-moon"></i></button>
+        <button class="lang-toggle" onclick="toggleLanguage()" data-i18n="langBtn">🌐 العربية</button>
+    </div>
+</header>
+
+<main class="content-wrapper">
+    
+    <!-- Home Section -->
+    <section id="home" class="active">
+        <div class="home-text">
+            <h2 data-i18n="homeTitle" data-i18n-html="true">Learn a skill...<br>and teach another!</h2>
+            <p class="tagline" data-i18n="tagline">Share your knowledge, learn something new.</p>
+            <div class="search-bar-home">
+                <input type="text" id="homeSearch" data-i18n-placeholder="searchSkills" placeholder="🔍 Search for skills...">
+                <select id="homeCategory">
+                    <option value="all" data-i18n="allCategories">All Categories</option>
+                    <option value="tech" data-i18n="categoryTech">💻 Technology</option>
+                    <option value="art" data-i18n="categoryArt">🎨 Art & Design</option>
+                    <option value="language" data-i18n="categoryLang">🌍 Languages</option>
+                    <option value="business" data-i18n="categoryBusiness">📊 Business</option>
+                    <option value="sports" data-i18n="categorySports">⚽ Sports</option>
+                </select>
+                <button class="home-btn" onclick="showSection('explore', document.querySelectorAll('nav button')[4])" data-i18n="navExplore">Explore Skills</button>
+            </div>
+        </div>
+        <div class="home-image">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800" alt="Learning">
+        </div>
+    </section>
+
+    <!-- Signup Section with Password Confirmation -->
+    <section id="signup">
+        <div class="section-header"><h2 data-i18n="signupTitle">Create Account</h2></div>
+        <div class="card-container">
+            <form action="/register" method="POST" id="signupForm">
+                <input type="text" name="username" data-i18n-placeholder="fullName" placeholder="Full Name" required>
+                <input type="email" name="email" data-i18n-placeholder="email" placeholder="Email" required>
+                <input type="password" name="password" id="signupPassword" data-i18n-placeholder="password" placeholder="Password" required>
+                <input type="password" id="confirmPassword" data-i18n-placeholder="confirmPassword" placeholder="Confirm Password" required>
+                <div id="passwordError" style="color:#ef4444; font-size:0.8rem; display:none;" data-i18n="passwordMismatch">Passwords do not match!</div>
+                <select name="skillCategory" required>
+                    <option value="" data-i18n="selectCategory">Select Skill Category</option>
+                    <option value="tech" data-i18n="categoryTech">💻 Technology</option>
+                    <option value="art" data-i18n="categoryArt">🎨 Art & Design</option>
+                    <option value="language" data-i18n="categoryLang">🌍 Languages</option>
+                    <option value="business" data-i18n="categoryBusiness">📊 Business</option>
+                    <option value="sports" data-i18n="categorySports">⚽ Sports</option>
+                </select>
+                <input type="text" name="skillOffer" data-i18n-placeholder="skillOffer" placeholder="Skill You Offer" required>
+                <input type="text" name="skillLearn" data-i18n-placeholder="skillLearn" placeholder="Skill You Want to Learn" required>
+                <button type="submit" data-i18n="btnJoin">Join Community</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section id="login">
+        <div class="section-header"><h2 data-i18n="loginTitle">Welcome Back</h2></div>
+        <div class="card-container">
+            <form action="/login" method="POST">
+                <input type="email" name="email" data-i18n-placeholder="emailAddress" placeholder="Email Address" required>
+                <input type="password" name="password" data-i18n-placeholder="password" placeholder="Password" required>
+                <button type="submit" data-i18n="btnLogin">Login</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Profile Section with Grid Layout -->
+    <section id="profile">
+        <div class="section-header">
+            <h2 data-i18n="profileTitle">My Profile</h2>
+        </div>
+        
+        <!-- Profile Grid Container -->
+        <div class="profile-grid">
+            
+            <!-- Left Column: Profile Card + Profile Pic Upload -->
+            <div class="profile-left">
+                <div class="card-container profile-info-card">
+                    <div id="profileCard" style="text-align: center;"></div>
+                    <div class="profile-pic-upload" style="margin-top: 20px; text-align: center;">
+                        <label for="profilePicInput" class="upload-btn" style="
+                            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+                            color: white;
+                            padding: 8px 16px;
+                            border-radius: 25px;
+                            cursor: pointer;
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 8px;
+                            font-size: 13px;
+                            transition: all 0.3s;
+                        ">
+                            <i class="fas fa-camera"></i> Change Picture
+                        </label>
+                        <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+                        <div id="uploadStatus" style="font-size: 12px; margin-top: 10px; color: var(--text-muted);"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Friends Section -->
+            <div class="profile-right">
+                <div class="card-container friends-card">
+                    <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                        <i class="fas fa-users" style="color: var(--accent);"></i>
+                        <span data-i18n="myFriendsTitle">My Friends</span>
+                        <span id="friendsCount" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; font-size: 12px; padding: 2px 10px; border-radius: 20px;"></span>
+                    </h3>
+                    <div id="myFriendsList" style="max-height: 400px; overflow-y: auto;"></div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Second Row: Reviews and Requests -->
+        <div class="profile-two-columns">
+            
+            <!-- My Reviews -->
+            <div class="card-container reviews-card">
+                <h3><i class="fas fa-star" style="color: #f59e0b;"></i> <span data-i18n="myReviewsTitle">My Reviews</span></h3>
+                <div id="myReviews"></div>
+            </div>
+            
+            <!-- Incoming Friend Requests -->
+            <div class="card-container requests-card">
+                <h3><i class="fas fa-user-plus" style="color: var(--accent);"></i> <span data-i18n="pendingTitle">Incoming Requests</span></h3>
+                <div id="incomingRequests"></div>
+            </div>
+            
+        </div>
+        
+        <!-- Admin Messages Section (Full Width) -->
+        <div id="adminMessagesSection" class="card-container admin-messages-card" style="margin-top:20px; display:none;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="display: flex; align-items: center; gap: 10px; margin: 0;">
+                    <i class="fas fa-envelope" style="color: var(--accent);"></i>
+                    <span data-i18n="contactMessagesTitle">Contact Messages</span>
+                    <span id="unreadBadge" style="background: #ef4444; color: white; font-size: 11px; padding: 2px 10px; border-radius: 20px; display: none;"></span>
+                </h3>
+                <button onclick="refreshAdminMessages()" style="background: transparent; border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; cursor: pointer; color: var(--text-secondary);">
+                    <i class="fas fa-sync-alt"></i> <span data-i18n="refresh">Refresh</span>
+                </button>
+            </div>
+            <div id="adminMessagesList" style="max-height: 500px; overflow-y: auto;"></div>
+        </div>
+        
+        <!-- Logout Button -->
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/logout" class="logout-link" style="color: #ff3b30; font-weight: 600; text-decoration: none; padding: 10px 20px; display: inline-block; border-radius: 25px; transition: all 0.3s;">
+                <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Explore Section with Search, Filter, Pagination -->
+    <section id="explore">
+        <div class="section-header">
+            <h2 data-i18n="exploreTitle">Explore Skills</h2>
+            <div class="explore-filters">
+                <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="🔍 Search by name or skill..." onkeyup="filterUsers()">
+                <select id="categoryFilter" onchange="filterUsers()">
+                    <option value="all" data-i18n="allCategories">📂 All Categories</option>
+                    <option value="tech" data-i18n="categoryTech">💻 Technology</option>
+                    <option value="art" data-i18n="categoryArt">🎨 Art & Design</option>
+                    <option value="language" data-i18n="categoryLang">🌍 Languages</option>
+                    <option value="business" data-i18n="categoryBusiness">📊 Business</option>
+                    <option value="sports" data-i18n="categorySports">⚽ Sports</option>
+                </select>
+                <select id="skillTypeFilter" onchange="filterUsers()">
+                    <option value="all" data-i18n="allOfferLearn">All: Offer/Learn</option>
+                    <option value="offer" data-i18n="offering">📤 Offering</option>
+                    <option value="learn" data-i18n="wantToLearn">📥 Want to Learn</option>
+                </select>
+            </div>
+        </div>
+        <div id="cardsContainer" class="card-grid"></div>
+        <div class="pagination" id="pagination"></div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="section-header"><h2 data-i18n="contactTitle">Contact Us</h2></div>
+        <div class="card-container">
+            <form id="contactForm">
+                <input type="email" id="contactEmail" data-i18n-placeholder="yourEmail" placeholder="Your Email" required>
+                <textarea id="contactMessage" data-i18n-placeholder="message" placeholder="Message" style="width:100%; border-radius:15px; padding:15px; border:1px solid #ddd; margin-bottom:15px; min-height:100px; outline:none;"></textarea>
+                <button type="submit" data-i18n="btnSend">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+</main>
+
+<!-- Chat Window -->
+<div id="chatWindow" style="display:none; position:fixed; bottom:20px; right:20px; width:350px; height:500px; background:var(--bg-card); backdrop-filter:blur(24px); border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.2); z-index:1000; flex-direction:column; border:1px solid var(--border); overflow:hidden;">
+    <div style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color:white; padding:15px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <span id="chatWith" style="font-weight:600;">Chat</span>
+            <span id="chatOnline" style="font-size:0.7rem; background:#10b981; padding:2px 8px; border-radius:20px;">Online</span>
+        </div>
+        <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
+    </div>
+    <div id="chatMessages" style="flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:10px; background:var(--bg-main);"></div>
+    <div style="padding:15px; border-top:1px solid var(--border); display:flex; gap:10px; background:var(--bg-card);">
+        <input type="text" id="chatInput" data-i18n-placeholder="writeMessage" placeholder="Write a message..." style="flex:1; border:1px solid var(--border); border-radius:20px; padding:8px 15px; outline:none; background:var(--bg-main); color:var(--text-primary);">
+        <button onclick="sendMessage()" style="background:linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color:white; border:none; border-radius:50%; width:35px; height:35px; cursor:pointer;">➤</button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='skillFrontEnd.js') }}"></script>
+<script>
+    // ============================================
+    // Dark Mode Toggle
+    // ============================================
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+        const btn = document.getElementById('darkModeBtn');
+        if (document.body.classList.contains('dark')) {
+            btn.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            btn.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+    }
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark');
+        document.getElementById('darkModeBtn').innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    // ============================================
+    // Profile Picture Upload
+    // ============================================
+    document.getElementById('profilePicInput')?.addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (!file.type.startsWith('image/')) {
+            document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Please select an image file</span>';
+            return;
+        }
+        
+        if (file.size > 2 * 1024 * 1024) {
+            document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Image too large (max 2MB)</span>';
+            return;
+        }
+        
+        document.getElementById('uploadStatus').innerHTML = '<span style="color: var(--accent);"><i class="fas fa-spinner fa-spin"></i> Uploading...</span>';
+        
+        try {
+            const reader = new FileReader();
+            reader.onloadend = async function() {
+                const base64String = reader.result;
+                
+                const response = await fetch('/api/update_profile_pic', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ profile_pic: base64String })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('uploadStatus').innerHTML = '<span style="color: #10b981;">✅ Profile picture updated!</span>';
+                    setTimeout(() => loadProfile(), 1000);
+                } else {
+                    document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Upload failed: ' + (data.error || 'Unknown error') + '</span>';
+                }
+            };
+            reader.readAsDataURL(file);
+        } catch(err) {
+            console.error('Upload error:', err);
+            document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Network error</span>';
+        }
+        
+        e.target.value = '';
+    });
+
+    // ============================================
+    // Password confirmation
+    // ============================================
+    document.getElementById('signupForm')?.addEventListener('submit', function(e) {
+        const pwd = document.getElementById('signupPassword').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        if (pwd !== confirm) {
+            e.preventDefault();
+            document.getElementById('passwordError').style.display = 'block';
+        }
+    });
+
+    // ============================================
+    // Search, Filter, Pagination variables
+    // ============================================
+    let allUsers = [];
+    let currentPage = 1;
+    const usersPerPage = 20;
+
+    async function filterUsers() {
+        const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+        const category = document.getElementById('categoryFilter')?.value || 'all';
+        const skillType = document.getElementById('skillTypeFilter')?.value || 'all';
+        
+        let filtered = allUsers.filter(user => {
+            const matchesSearch = user.username.toLowerCase().includes(searchTerm) ||
+                                  user.skillOffer.toLowerCase().includes(searchTerm) ||
+                                  user.skillLearn.toLowerCase().includes(searchTerm);
+            const matchesCategory = category === 'all' || user.category === category;
+            let matchesSkillType = true;
+            if (skillType === 'offer') matchesSkillType = user.skillOffer !== 'Generalist';
+            if (skillType === 'learn') matchesSkillType = user.skillLearn !== 'Everything';
+            return matchesSearch && matchesCategory && matchesSkillType;
+        });
+        
+        currentPage = 1;
+        renderPaginatedUsers(filtered);
+    }
+
+    function renderPaginatedUsers(users) {
+        const container = document.getElementById('cardsContainer');
+        if (!container) return;
+        
+        const start = (currentPage - 1) * usersPerPage;
+        const paginatedUsers = users.slice(start, start + usersPerPage);
+        
+        if (paginatedUsers.length === 0) {
+            container.innerHTML = `<div class="empty-state">No users found matching your criteria.</div>`;
+        } else {
+            container.innerHTML = paginatedUsers.map(user => `
+                <div class="profile-card user-card" data-user-id="${user.id}">
+                    <img src="${user.profile_pic}" class="avatar-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                    <h3>${escapeHtml(user.username)}</h3>
+                    <div class="rating-stars">
+                        ${generateStars(user.rating || 0)}
+                        <span class="rating-count">(${user.reviewCount || 0})</span>
+                    </div>
+                    <div class="skills-wrapper">
+                        <div class="skill-badge"><span>📤 Offers</span><strong>${escapeHtml(user.skillOffer)}</strong></div>
+                        <div class="skill-badge"><span>📥 Wants</span><strong>${escapeHtml(user.skillLearn)}</strong></div>
+                    </div>
+                    ${getActionButton(user)}
+                </div>
+            `).join('');
+        }
+        
+        const totalPages = Math.ceil(users.length / usersPerPage);
+        const paginationDiv = document.getElementById('pagination');
+        if (paginationDiv) {
+            paginationDiv.innerHTML = `
+                <button onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>◀ Previous</button>
+                <span>Page ${currentPage} of ${totalPages || 1}</span>
+                <button onclick="changePage(1)" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}>Next ▶</button>
+            `;
+        }
+    }
+
+    function changePage(delta) {
+        currentPage += delta;
+        filterUsers();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function generateStars(rating) {
+        const full = Math.floor(rating);
+        const half = rating % 1 >= 0.5;
+        let stars = '';
+        for (let i = 0; i < full; i++) stars += '<i class="fas fa-star" style="color:#f59e0b;"></i>';
+        if (half) stars += '<i class="fas fa-star-half-alt" style="color:#f59e0b;"></i>';
+        while (stars.length / 29 < 5) stars += '<i class="far fa-star" style="color:#f59e0b;"></i>';
+        return stars;
+    }
+
+    function getActionButton(user) {
+        if (user.relationship === 'accepted') {
+            return `<button onclick="openChat(${user.id}, '${escapeHtml(user.username)}')" class="chat-btn" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.3s;"><i class="fas fa-comment"></i> Chat Now</button>`;
+        } else if (user.relationship === 'pending') {
+            return `<button disabled class="pending-btn" style="background: #9ca3af; color: white; border: none; padding: 10px; border-radius: 30px; width: 100%;">Pending</button>`;
+        } else {
+            return `<button onclick="sendFriendRequest(${user.id})" class="add-btn" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.3s;"><i class="fas fa-user-plus"></i> Add Friend</button>`;
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // ============================================
+    // My Friends Functions
+    // ============================================
+    
+    async function loadMyFriends() {
+        try {
+            const response = await fetch('/api/my_friends');
+            if (response.status === 401) return;
+            
+            const friends = await response.json();
+            const container = document.getElementById('myFriendsList');
+            const friendsCount = document.getElementById('friendsCount');
+            
+            if (!container) return;
+            
+            if (friendsCount) {
+                friendsCount.textContent = friends.length;
+            }
+            
+            if (friends.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--text-muted);">
+                    <i class="fas fa-user-friends" style="font-size: 40px; margin-bottom: 10px; display: block;"></i>
+                    <span data-i18n="noFriendsYet">No friends yet. Explore and add some!</span>
+                </div>`;
+                return;
+            }
+            
+            container.innerHTML = friends.map(friend => `
+                <div class="friend-item" style="display: flex; align-items: center; gap: 15px; padding: 12px; border-bottom: 1px solid var(--border); transition: all 0.3s; border-radius: 12px;">
+                    <img src="${friend.profile_pic}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                    <div style="flex: 1;">
+                        <strong style="font-size: 1rem;">${escapeHtml(friend.username)}</strong>
+                        <div style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
+                            <span style="font-size: 11px; background: rgba(102, 126, 234, 0.1); padding: 2px 8px; border-radius: 20px;">📤 ${escapeHtml(friend.skillOffer)}</span>
+                            <span style="font-size: 11px; background: rgba(236, 72, 153, 0.1); padding: 2px 8px; border-radius: 20px;">📥 ${escapeHtml(friend.skillLearn)}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="openChat(${friend.id}, '${escapeHtml(friend.username)}')" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 8px 16px; border-radius: 25px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
+                            <i class="fas fa-comment"></i> Chat
+                        </button>
+                        <button onclick="viewFriendProfile(${friend.id})" style="background: transparent; border: 1px solid var(--border); padding: 8px 12px; border-radius: 25px; cursor: pointer; font-size: 12px;">
+                            <i class="fas fa-user"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+        } catch(e) {
+            console.error('Error loading friends:', e);
+        }
+    }
+
+    function viewFriendProfile(friendId) {
+        const friend = allUsers.find(u => u.id === friendId);
+        if (friend) {
+            alert(`${friend.username}\n📤 Offers: ${friend.skillOffer}\n📥 Wants: ${friend.skillLearn}\n⭐ Rating: ${(friend.rating || 0).toFixed(1)}/5`);
+        }
+    }
+
+    // ============================================
+    // Admin Messages Functions
+    // ============================================
+    
+    async function loadAdminMessages() {
+        try {
+            const response = await fetch('/api/contact_messages');
+            
+            if (response.status === 403 || response.status === 401) {
+                const section = document.getElementById('adminMessagesSection');
+                if (section) section.style.display = 'none';
+                return;
+            }
+            
+            if (!response.ok) return;
+            
+            const messages = await response.json();
+            const section = document.getElementById('adminMessagesSection');
+            const container = document.getElementById('adminMessagesList');
+            const unreadBadge = document.getElementById('unreadBadge');
+            
+            if (!section || !container) return;
+            
+            section.style.display = 'block';
+            
+            const unreadCount = messages.filter(m => !m.is_read).length;
+            if (unreadBadge) {
+                if (unreadCount > 0) {
+                    unreadBadge.textContent = `${unreadCount} New`;
+                    unreadBadge.style.display = 'inline-block';
+                } else {
+                    unreadBadge.style.display = 'none';
+                }
+            }
+            
+            if (messages.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 10px; display: block;"></i>
+                    No messages yet
+                </div>`;
+                return;
+            }
+            
+            container.innerHTML = messages.map(msg => `
+                <div class="admin-message-item" data-msg-id="${msg.id}" style="background: ${!msg.is_read ? 'rgba(102, 126, 234, 0.08)' : 'transparent'}; border-bottom: 1px solid var(--border); padding: 16px; transition: all 0.3s; border-radius: 12px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
+                                <strong style="color: var(--accent);"><i class="fas fa-envelope"></i> ${escapeHtml(msg.email)}</strong>
+                                <span style="font-size: 11px; color: var(--text-muted);"><i class="far fa-calendar-alt"></i> ${new Date(msg.created_at).toLocaleString()}</span>
+                                ${!msg.is_read ? '<span style="background: #ef4444; color: white; font-size: 10px; padding: 2px 8px; border-radius: 20px;">NEW</span>' : ''}
+                            </div>
+                            <p style="color: var(--text-primary); margin: 0; line-height: 1.5; word-break: break-word;">${escapeHtml(msg.message)}</p>
+                        </div>
+                        ${!msg.is_read ? `
+                            <button onclick="markMessageRead(${msg.id}, this)" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.3s;">
+                                <i class="fas fa-check"></i> Mark as read
+                            </button>
+                        ` : `
+                            <span style="font-size: 12px; color: #10b981;"><i class="fas fa-check-circle"></i> Read</span>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+            
+        } catch(e) {
+            console.error('Error loading admin messages:', e);
+        }
+    }
+
+    async function markMessageRead(msgId, btnElement) {
+        try {
+            const response = await fetch(`/api/mark_message_read/${msgId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            if (response.ok) {
+                const messageItem = btnElement.closest('.admin-message-item');
+                if (messageItem) {
+                    messageItem.style.background = 'transparent';
+                    const buttonContainer = btnElement.parentElement;
+                    buttonContainer.innerHTML = '<span style="font-size: 12px; color: #10b981;"><i class="fas fa-check-circle"></i> Read</span>';
+                }
+                
+                const unreadBadge = document.getElementById('unreadBadge');
+                if (unreadBadge) {
+                    const currentText = unreadBadge.textContent;
+                    const currentCount = parseInt(currentText) || 0;
+                    const newCount = currentCount - 1;
+                    if (newCount <= 0) {
+                        unreadBadge.style.display = 'none';
+                    } else {
+                        unreadBadge.textContent = `${newCount} New`;
+                    }
+                }
+            }
+        } catch(e) {
+            console.error('Error marking message as read:', e);
+        }
+    }
+
+    function refreshAdminMessages() {
+        loadAdminMessages();
+    }
+
+    // ============================================
+    // Profile Loading with updated layout
+    // ============================================
+    
+    async function loadProfile() {
+        const res = await fetch('/api/current_user');
+        const container = document.getElementById('profileCard');
+        
+        if (res.status === 401) {
+            container.innerHTML = `<p class="empty-state">${translations?.[currentLang]?.notLoggedIn || 'You are not logged in yet.'}</p>`;
+            return;
+        }
+        
+        const user = await res.json();
+        container.innerHTML = `
+            <div class="profile-info" style="text-align:center;">
+                <img src="${user.profile_pic}" class="avatar-img-large" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent); margin-bottom: 15px;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                <h3 style="margin-top:1rem;">${escapeHtml(user.username)}</h3>
+                <p style="color:var(--text-muted);">${user.email || ''}</p>
+                <div class="rating-stars" style="justify-content: center; margin-top: 10px;">
+                    ${generateStars(user.rating || 0)}
+                    <span class="rating-count">(${user.reviewCount || 0})</span>
+                </div>
+            </div>
+        `;
+        
+        loadIncomingRequests();
+        loadMyReviews();
+        loadAdminMessages();
+        loadMyFriends();
+    }
+
+    async function loadIncomingRequests() {
+        const res = await fetch('/api/my_requests');
+        const requests = await res.json();
+        const container = document.getElementById('incomingRequests');
+        
+        if (!container) return;
+        
+        if (requests.length === 0) {
+            container.innerHTML = `<p class="empty-state">No pending requests.</p>`;
+            return;
+        }
+        
+        container.innerHTML = requests.map(req => `
+            <div class="request-item" style="display: flex; align-items: center; gap: 12px; padding: 10px; border-bottom: 1px solid var(--border);">
+                <img src="${req.sender_pic}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                <span style="flex:1; font-weight:600;">${escapeHtml(req.sender_name)}</span>
+                <div style="display:flex; gap:0.5rem;">
+                    <button onclick="handleFriendRequest(${req.id}, 'accept')" style="background: #10b981; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer;">✓ Accept</button>
+                    <button onclick="handleFriendRequest(${req.id}, 'reject')" style="background: #9ca3af; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer;">✗ Reject</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function handleFriendRequest(reqId, action) {
+        const res = await fetch(`/api/handle_request/${reqId}/${action}`, { method: 'POST' });
+        if (res.ok) {
+            loadIncomingRequests();
+            if (action === 'accept') {
+                updateExplore();
+                loadMyFriends();
+            }
+        }
+    }
+
+    async function loadMyReviews() {
+        const container = document.getElementById('myReviews');
+        if (!container) return;
+        
+        try {
+            const res = await fetch('/api/my_reviews');
+            if (res.status === 401) {
+                container.innerHTML = `<p class="empty-state">Not logged in.</p>`;
+                return;
+            }
+            const reviews = await res.json();
+            
+            if (reviews.length === 0) {
+                container.innerHTML = `<p class="empty-state">No reviews yet.</p>`;
+                return;
+            }
+            
+            container.innerHTML = reviews.map(review => `
+                <div class="request-item" style="display: flex; align-items: center; gap: 12px; padding: 10px; border-bottom: 1px solid var(--border);">
+                    <img src="${review.reviewer_pic}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                    <div style="flex:1;">
+                        <strong>${escapeHtml(review.reviewer_name)}</strong>
+                        <div class="rating-stars" style="margin-top: 4px;">${generateStars(review.rating)}</div>
+                        <p style="font-size:0.85rem; margin-top:0.3rem;">${escapeHtml(review.comment)}</p>
+                    </div>
+                </div>
+            `).join('');
+        } catch(e) {
+            console.error('Error loading reviews:', e);
+        }
+    }
+
+    // ============================================
+    // Chat System
+    // ============================================
+    
+    async function openChat(userId, userName) {
+        activeChatId = userId;
+        document.getElementById('chatWith').innerText = userName;
+        document.getElementById('chatWindow').style.display = 'flex';
+        loadMessages();
+        
+        if (chatInterval) clearInterval(chatInterval);
+        chatInterval = setInterval(loadMessages, 3000);
+    }
+
+    function closeChat() {
+        document.getElementById('chatWindow').style.display = 'none';
+        if (chatInterval) {
+            clearInterval(chatInterval);
+            chatInterval = null;
+        }
+        activeChatId = null;
+    }
+
+    async function loadMessages() {
+        if (!activeChatId) return;
+        
+        try {
+            const res = await fetch(`/api/chat/${activeChatId}`);
+            const msgs = await res.json();
+            
+            const meRes = await fetch('/api/current_user');
+            const me = await meRes.json();
+            
+            const container = document.getElementById('chatMessages');
+            container.innerHTML = msgs.map(m => `
+                <div style="align-self: ${m.sender === me.id ? 'flex-end' : 'flex-start'}; 
+                            background: ${m.sender === me.id ? '#a855f7' : 'var(--bg-card)'}; 
+                            color: ${m.sender === me.id ? 'white' : 'var(--text-primary)'};
+                            padding: 8px 15px; 
+                            border-radius: 18px; 
+                            max-width: 80%; 
+                            font-size: 14px;
+                            box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                    ${escapeHtml(m.text)}
+                </div>
+            `).join('');
+            
+            container.scrollTop = container.scrollHeight;
+        } catch(e) {
+            console.error('Error loading messages:', e);
+        }
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text || !activeChatId) return;
+        
+        try {
+            await fetch(`/api/chat/${activeChatId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            input.value = '';
+            loadMessages();
+        } catch(e) {
+            console.error('Error sending message:', e);
+        }
+    }
+
+    // ============================================
+    // Contact Form
+    // ============================================
+    document.addEventListener('submit', async (e) => {
+        if (e.target.id === 'contactForm') {
+            e.preventDefault();
+            const email = document.getElementById('contactEmail')?.value;
+            const message = document.getElementById('contactMessage')?.value;
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn?.innerHTML;
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                submitBtn.disabled = true;
+            }
+            
+            try {
+                const res = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, message })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(currentLang === 'ar' ? "✓ شكراً لتواصلك معنا! تم إرسال رسالتك." : "✓ Thanks for reaching out! Your message has been sent.");
+                    e.target.reset();
+                } else {
+                    alert("❌ Error: " + (data.error || "Please try again."));
+                }
+            } catch(err) {
+                alert("❌ Network error. Please try again.");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+        }
+    });
+
+    // ============================================
+    // Send Friend Request
+    // ============================================
+    async function sendFriendRequest(userId) {
+        const res = await fetch(`/api/send_request/${userId}`, { method: 'POST' });
+        if (res.status === 401) {
+            alert('You are not logged in yet.');
+        } else {
+            const data = await res.json();
+            if (data.success) updateExplore();
+        }
+    }
+
+    // ============================================
+    // Update Explore
+    // ============================================
+    async function updateExplore() {
+        try {
+            const response = await fetch('/api/users');
+            allUsers = await response.json();
+            filterUsers();
+            applyTilt();
+        } catch(e) { console.error(e); }
+    }
+
+    // ============================================
+    // Apply Tilt Effect
+    // ============================================
+    function applyTilt() {
+        const cards = document.querySelectorAll('.card-container, .profile-card, .user-card');
+        cards.forEach(card => {
+            if (card.dataset.tiltApplied) return;
+            card.dataset.tiltApplied = "true";
+            
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const multiplier = 8;
+                const xRotate = (-y / (rect.height / 2)) * multiplier;
+                const yRotate = (x / (rect.width / 2)) * multiplier;
+                card.style.transform = `perspective(1000px) rotateX(${xRotate}deg) rotateY(${yRotate}deg) scale(1.02)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+                card.style.transition = 'all 0.5s ease';
+            });
+        });
+    }
+
+    // ============================================
+    // Navigation Handler
+    // ============================================
+    function showSection(id, btnElement) {
+        document.querySelectorAll("main section").forEach(sec => {
+            sec.style.display = "none";
+        });
+        
+        const target = document.getElementById(id);
+        if (!target) return;
+        
+        target.style.display = id === 'home' ? 'flex' : 'block';
+        
+        if (btnElement) {
+            document.querySelectorAll("nav button").forEach(btn => {
+                btn.classList.remove("active");
+            });
+            btnElement.classList.add("active");
+        }
+        
+        if (id === 'explore') {
+            updateExplore();
+        }
+        if (id === 'profile') {
+            loadProfile();
+        }
+        
+        setTimeout(applyTilt, 50);
+    }
+
+    // ============================================
+    // Initialize
+    // ============================================
+    let activeChatId = null;
+    let chatInterval = null;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section');
+        const error = urlParams.get('error');
+        if (error) alert("Error: " + error);
+        if (section) {
+            const btn = Array.from(document.querySelectorAll('nav button')).find(b => b.getAttribute('onclick')?.includes(section));
+            if (btn) showSection(section, btn);
+        } else {
+            showSection('home', document.querySelector('nav button'));
+        }
+    });
+</script>
+</body>
+</html>
