@@ -31,19 +31,18 @@
     </nav>
     <div class="header-controls">
         <button class="dark-toggle" onclick="toggleDarkMode()" id="darkModeBtn"><i class="fas fa-moon"></i></button>
-        <button class="lang-toggle" onclick="toggleLanguage()" data-i18n="langBtn">🌐 العربية</button>
+        <button class="lang-toggle" onclick="toggleLanguage()" data-i18n="langBtn">العربية</button>
     </div>
 </header>
 
 <main class="content-wrapper">
     
-    <!-- Home Section -->
     <section id="home" class="active">
         <div class="home-text">
             <h2 data-i18n="homeTitle" data-i18n-html="true">Learn a skill...<br>and teach another!</h2>
             <p class="tagline" data-i18n="tagline">Share your knowledge, learn something new.</p>
             <div class="search-bar-home">
-                <input type="text" id="homeSearch" data-i18n-placeholder="searchSkills" placeholder="🔍 Search for skills...">
+                <input type="text" id="homeSearch" data-i18n-placeholder="searchSkills" placeholder="Search for skills...">
                 <select id="homeCategory">
                     <option value="all" data-i18n="allCategories">All Categories</option>
                     <option value="tech" data-i18n="categoryTech">Technology</option>
@@ -60,7 +59,6 @@
         </div>
     </section>
 
-    <!-- Signup Section with Password Confirmation -->
     <section id="signup">
         <div class="section-header"><h2 data-i18n="signupTitle">Create Account</h2></div>
         <div class="card-container">
@@ -85,7 +83,6 @@
         </div>
     </section>
 
-    <!-- Login Section -->
     <section id="login">
         <div class="section-header"><h2 data-i18n="loginTitle">Welcome Back</h2></div>
         <div class="card-container">
@@ -97,70 +94,40 @@
         </div>
     </section>
 
-    <!-- Profile Section with Grid Layout -->
     <section id="profile">
-        <div class="section-header">
-            <h2 data-i18n="profileTitle">My Profile</h2>
-        </div>
+        <div class="section-header"><h2 data-i18n="profileTitle">My Profile</h2></div>
         
-        <!-- Profile Grid Container -->
         <div class="profile-grid">
-            
-            <!-- Left Column: Profile Card + Profile Pic Upload -->
             <div class="profile-left">
                 <div class="card-container profile-info-card">
                     <div id="profileCard" style="text-align: center;"></div>
                     <div class="profile-pic-upload" style="margin-top: 20px; text-align: center;">
-                        <label for="profilePicInput" class="upload-btn" style="
-                            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-                            color: white;
-                            padding: 8px 16px;
-                            border-radius: 25px;
-                            cursor: pointer;
-                            display: inline-flex;
-                            align-items: center;
-                            gap: 8px;
-                            font-size: 13px;
-                            transition: all 0.3s;
-                        ">
+                        <label for="profilePicInput" class="upload-btn" style="background: var(--gradient-btn); color: white; padding: 8px 16px; border-radius: 25px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; transition: all 0.3s;">
                             <i class="fas fa-camera"></i> <span data-i18n="changePicture">Change Picture</span>
                         </label>
                         <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
                         <div id="uploadStatus" style="font-size: 12px; margin-top: 10px; color: var(--text-muted);"></div>
                     </div>
-                    <!-- Edit Profile Button -->
                     <div style="text-align: center; margin-top: 15px;">
-                        <button onclick="showEditProfileModal()" class="edit-profile-btn" style="
-                            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-                            color: white;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 25px;
-                            cursor: pointer;
-                            font-weight: 600;
-                            transition: all 0.3s;
-                        ">
+                        <button onclick="showEditProfileModal()" class="edit-profile-btn" style="background: var(--gradient-btn); color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
                             <i class="fas fa-edit"></i> <span data-i18n="editProfile">Edit Profile</span>
                         </button>
                     </div>
                 </div>
             </div>
             
-            <!-- Right Column: Friends Section -->
             <div class="profile-right">
                 <div class="card-container friends-card">
                     <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
                         <i class="fas fa-users" style="color: var(--accent);"></i>
                         <span data-i18n="myFriendsTitle">My Friends</span>
-                        <span id="friendsCount" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; font-size: 12px; padding: 2px 10px; border-radius: 20px;"></span>
+                        <span id="friendsCount" style="background: var(--gradient-btn); color: white; font-size: 12px; padding: 2px 10px; border-radius: 20px;"></span>
                     </h3>
                     <div id="myFriendsList" style="max-height: 400px; overflow-y: auto;"></div>
                 </div>
             </div>
-            
         </div>
         
-        <!-- My Skills Section -->
         <div class="card-container" style="margin-top:20px;">
             <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
                 <i class="fas fa-code" style="color: var(--accent);"></i>
@@ -169,35 +136,29 @@
             <div id="mySkillsList" style="text-align: center;">
                 <div class="skills-wrapper" style="background: rgba(255,255,255,0.3); border-radius: 16px; padding: 15px;">
                     <div class="skill-badge" style="margin-bottom: 12px;">
-                        <span>📤 <span data-i18n="lblOffers">Offers</span></span>
+                        <span><i class="fas fa-arrow-up" style="margin-right: 5px;"></i><span data-i18n="lblOffers">Offers</span></span>
                         <strong id="profileSkillOffer" style="display: block; margin-top: 5px;">Loading...</strong>
                     </div>
                     <div class="skill-badge">
-                        <span>📥 <span data-i18n="lblWants">Wants</span></span>
+                        <span><i class="fas fa-arrow-down" style="margin-right: 5px;"></i><span data-i18n="lblWants">Wants</span></span>
                         <strong id="profileSkillLearn" style="display: block; margin-top: 5px;">Loading...</strong>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Second Row: Reviews and Requests -->
         <div class="profile-two-columns">
-            
-            <!-- My Reviews -->
             <div class="card-container reviews-card">
                 <h3><i class="fas fa-star" style="color: #f59e0b;"></i> <span data-i18n="myReviewsTitle">My Reviews</span></h3>
                 <div id="myReviews"></div>
             </div>
             
-            <!-- Incoming Friend Requests -->
             <div class="card-container requests-card">
                 <h3><i class="fas fa-user-plus" style="color: var(--accent);"></i> <span data-i18n="pendingTitle">Incoming Requests</span></h3>
                 <div id="incomingRequests"></div>
             </div>
-            
         </div>
         
-        <!-- Admin Messages Section (Full Width) -->
         <div id="adminMessagesSection" class="card-container admin-messages-card" style="margin-top:20px; display:none;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                 <h3 style="display: flex; align-items: center; gap: 10px; margin: 0;">
@@ -212,36 +173,24 @@
             <div id="adminMessagesList" style="max-height: 500px; overflow-y: auto;"></div>
         </div>
         
-        <!-- Logout Button -->
         <div style="text-align: center; margin-top: 20px;">
             <a href="/logout" class="logout-link" style="color: #ff3b30; font-weight: 600; text-decoration: none; padding: 10px 20px; display: inline-block; border-radius: 25px; transition: all 0.3s;">
                 <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
             </a>
         </div>
         
-        <!-- Delete Account Button -->
         <div style="text-align: center; margin-top: 10px;">
-            <button onclick="showDeleteAccountModal()" class="delete-account-btn" style="
-                background: transparent;
-                border: 1px solid #ff3b30;
-                color: #ff3b30;
-                padding: 10px 20px;
-                border-radius: 25px;
-                cursor: pointer;
-                font-weight: 600;
-                transition: all 0.3s;
-            ">
+            <button onclick="showDeleteAccountModal()" class="delete-account-btn" style="background: transparent; border: 1px solid #ff3b30; color: #ff3b30; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
                 <i class="fas fa-trash-alt"></i> <span data-i18n="deleteAccount">Delete Account</span>
             </button>
         </div>
     </section>
 
-    <!-- Explore Section with Search, Filter, Pagination -->
     <section id="explore">
         <div class="section-header">
             <h2 data-i18n="exploreTitle">Explore Skills</h2>
             <div class="explore-filters">
-                <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="🔍 Search by name or skill..." onkeyup="filterUsers()">
+                <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search by name or skill..." onkeyup="filterUsers()">
                 <select id="categoryFilter" onchange="filterUsers()">
                     <option value="all" data-i18n="allCategories">All Categories</option>
                     <option value="tech" data-i18n="categoryTech">Technology</option>
@@ -261,18 +210,16 @@
         <div class="pagination" id="pagination"></div>
     </section>
 
-    <!-- Contact Section with Site Rating -->
     <section id="contact">
         <div class="section-header"><h2 data-i18n="contactTitle">Contact Us</h2></div>
         <div class="card-container">
             <form id="contactForm">
                 <input type="email" id="contactEmail" data-i18n-placeholder="yourEmail" placeholder="Your Email" required>
-                <textarea id="contactMessage" data-i18n-placeholder="message" placeholder="Message" style="width:100%; border-radius:15px; padding:15px; border:1px solid #ddd; margin-bottom:15px; min-height:100px; outline:none;"></textarea>
+                <textarea id="contactMessage" data-i18n-placeholder="message" placeholder="Message" style="width:100%; border-radius:15px; padding:15px; border:1px solid var(--border); background:var(--bg-main); margin-bottom:15px; min-height:100px; outline:none;"></textarea>
                 <button type="submit" data-i18n="btnSend">Send Message</button>
             </form>
         </div>
         
-        <!-- Site Rating Section -->
         <div class="card-container" style="margin-top: 30px; text-align: center;">
             <h3 style="margin-bottom: 15px;">
                 <i class="fas fa-star" style="color: #f59e0b;"></i>
@@ -298,23 +245,21 @@
 
 </main>
 
-<!-- Chat Window -->
 <div id="chatWindow" style="display:none; position:fixed; bottom:20px; right:20px; width:350px; height:500px; background:var(--bg-card); backdrop-filter:blur(24px); border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.2); z-index:1000; flex-direction:column; border:1px solid var(--border); overflow:hidden;">
-    <div style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color:white; padding:15px; display:flex; justify-content:space-between; align-items:center;">
+    <div style="background: var(--gradient-btn); color:white; padding:15px; display:flex; justify-content:space-between; align-items:center;">
         <div style="display:flex; align-items:center; gap:10px;">
             <span id="chatWith" style="font-weight:600;">Chat</span>
             <span id="chatOnline" style="font-size:0.7rem; background:#10b981; padding:2px 8px; border-radius:20px;">Online</span>
         </div>
-        <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
+        <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">x</button>
     </div>
     <div id="chatMessages" style="flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:10px; background:var(--bg-main);"></div>
     <div style="padding:15px; border-top:1px solid var(--border); display:flex; gap:10px; background:var(--bg-card);">
         <input type="text" id="chatInput" data-i18n-placeholder="writeMessage" placeholder="Write a message..." style="flex:1; border:1px solid var(--border); border-radius:20px; padding:8px 15px; outline:none; background:var(--bg-main); color:var(--text-primary);">
-        <button onclick="sendMessage()" style="background:linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color:white; border:none; border-radius:50%; width:35px; height:35px; cursor:pointer;">➤</button>
+        <button onclick="sendMessage()" style="background:var(--gradient-btn); color:white; border:none; border-radius:50%; width:35px; height:35px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
 
-<!-- Delete Account Modal -->
 <div id="deleteModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
     <div style="background:var(--bg-card); backdrop-filter:blur(24px); border-radius:24px; padding:30px; max-width:400px; text-align:center; border:1px solid var(--border);">
         <i class="fas fa-exclamation-triangle" style="font-size:48px; color:#ff3b30; margin-bottom:20px;"></i>
@@ -328,26 +273,21 @@
     </div>
 </div>
 
-<!-- Edit Profile Modal -->
 <div id="editProfileModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
     <div style="background:var(--bg-card); backdrop-filter:blur(24px); border-radius:24px; padding:30px; max-width:450px; width:90%; border:1px solid var(--border);">
         <h3 style="margin-bottom:20px; text-align:center;" data-i18n="editProfileTitle">Edit Profile</h3>
-        
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; font-weight:600;" data-i18n="username">Username</label>
             <input type="text" id="editUsername" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
         </div>
-        
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; font-weight:600;" data-i18n="skillOffer">Skill You Offer</label>
             <input type="text" id="editSkillOffer" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
         </div>
-        
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; font-weight:600;" data-i18n="skillLearn">Skill You Want to Learn</label>
             <input type="text" id="editSkillLearn" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
         </div>
-        
         <div style="margin-bottom:20px;">
             <label style="display:block; margin-bottom:5px; font-weight:600;" data-i18n="category">Category</label>
             <select id="editCategory" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
@@ -358,19 +298,16 @@
                 <option value="sports" data-i18n="categorySports">Sports</option>
             </select>
         </div>
-        
         <div style="display:flex; gap:10px; justify-content:center;">
             <button onclick="closeEditProfileModal()" style="background:transparent; border:1px solid var(--border); padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="cancel">Cancel</button>
-            <button onclick="saveProfileChanges()" style="background:linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="save">Save Changes</button>
+            <button onclick="saveProfileChanges()" style="background:var(--gradient-btn); color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="save">Save Changes</button>
         </div>
     </div>
 </div>
 
-<!-- Review Modal -->
 <div id="reviewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
     <div style="background:var(--bg-card); backdrop-filter:blur(24px); border-radius:24px; padding:30px; max-width:450px; width:90%; border:1px solid var(--border);">
         <h3 style="margin-bottom:20px; text-align:center;" data-i18n="rateUser">Rate User</h3>
-        
         <div style="text-align:center; margin-bottom:20px;">
             <p id="reviewUserName" style="font-weight:600; margin-bottom:15px;"></p>
             <div id="ratingStars" style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
@@ -383,1022 +320,13 @@
             <input type="hidden" id="selectedRating" value="0">
             <textarea id="reviewComment" data-i18n-placeholder="writeReview" placeholder="Write your review..." style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main); margin-bottom:20px; min-height:80px;"></textarea>
         </div>
-        
         <div style="display:flex; gap:10px; justify-content:center;">
             <button onclick="closeReviewModal()" style="background:transparent; border:1px solid var(--border); padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="cancel">Cancel</button>
-            <button onclick="submitReview()" style="background:linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="submitReview">Submit Review</button>
+            <button onclick="submitReview()" style="background:var(--gradient-btn); color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer;" data-i18n="submitReview">Submit Review</button>
         </div>
     </div>
 </div>
 
 <script src="{{ url_for('static', filename='skillFrontEnd.js') }}"></script>
-<script>
-    // Dark Mode Toggle
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark');
-        localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-        const btn = document.getElementById('darkModeBtn');
-        if (document.body.classList.contains('dark')) {
-            btn.innerHTML = '<i class="fas fa-sun"></i>';
-        } else {
-            btn.innerHTML = '<i class="fas fa-moon"></i>';
-        }
-    }
-    if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark');
-        document.getElementById('darkModeBtn').innerHTML = '<i class="fas fa-sun"></i>';
-    }
-
-    // Edit Profile Functions
-    let currentUserData = {};
-
-    async function showEditProfileModal() {
-        try {
-            const response = await fetch('/api/current_user');
-            currentUserData = await response.json();
-            
-            const userFromList = allUsers.find(u => u.id === currentUserData.id);
-            
-            document.getElementById('editUsername').value = currentUserData.username;
-            document.getElementById('editSkillOffer').value = userFromList?.skillOffer || '';
-            document.getElementById('editSkillLearn').value = userFromList?.skillLearn || '';
-            document.getElementById('editCategory').value = currentUserData.category || 'tech';
-            
-            document.getElementById('editProfileModal').style.display = 'flex';
-        } catch(e) {
-            console.error('Error loading profile data:', e);
-        }
-    }
-
-    function closeEditProfileModal() {
-        document.getElementById('editProfileModal').style.display = 'none';
-    }
-
-    async function saveProfileChanges() {
-        const newUsername = document.getElementById('editUsername').value.trim();
-        const newSkillOffer = document.getElementById('editSkillOffer').value.trim();
-        const newSkillLearn = document.getElementById('editSkillLearn').value.trim();
-        const newCategory = document.getElementById('editCategory').value;
-        
-        if (!newUsername) {
-            alert(currentLang === 'ar' ? 'الرجاء إدخال اسم المستخدم' : 'Please enter a username');
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/update_profile', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: newUsername,
-                    skillOffer: newSkillOffer,
-                    skillLearn: newSkillLearn,
-                    category: newCategory
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                alert(currentLang === 'ar' ? '✓ تم تحديث الملف الشخصي بنجاح' : '✓ Profile updated successfully');
-                closeEditProfileModal();
-                loadProfile();
-                updateExplore();
-            } else {
-                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
-            }
-        } catch(err) {
-            alert(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error');
-        }
-    }
-
-    // Delete Account Functions
-    function showDeleteAccountModal() {
-        document.getElementById('deleteModal').style.display = 'flex';
-    }
-
-    function closeDeleteModal() {
-        document.getElementById('deleteModal').style.display = 'none';
-        document.getElementById('confirmDeleteUsername').value = '';
-    }
-
-    async function deleteAccount() {
-        const username = document.getElementById('confirmDeleteUsername').value;
-        
-        if (!username) {
-            alert(currentLang === 'ar' ? 'الرجاء كتابة اسم المستخدم للتأكيد' : 'Please enter your username to confirm');
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/delete_account', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: username })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                alert(currentLang === 'ar' ? 'تم حذف الحساب بنجاح. وداعاً!' : 'Account deleted successfully. Goodbye!');
-                window.location.href = '/';
-            } else {
-                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
-            }
-        } catch(err) {
-            alert(currentLang === 'ar' ? 'خطأ في الشبكة. الرجاء المحاولة مرة أخرى' : 'Network error. Please try again.');
-        }
-    }
-
-    // Block/Unblock Functions
-    async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
-        if (isCurrentlyBlocked) {
-            const confirmed = confirm(currentLang === 'ar' ? `إلغاء حظر ${username}؟` : `Unblock ${username}?`);
-            if (confirmed) {
-                const response = await fetch(`/api/unblock_user/${userId}`, { method: 'POST' });
-                const data = await response.json();
-                if (data.success) {
-                    alert(currentLang === 'ar' ? `✓ تم إلغاء حظر ${username}` : `✓ ${username} unblocked`);
-                    updateExplore();
-                } else {
-                    alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
-                }
-            }
-        } else {
-            const confirmed = confirm(currentLang === 'ar' ? `هل أنت متأكد من حظر ${username}؟\nلن تتمكن من رؤية رسائله أو التواصل معه.` : `Are you sure you want to block ${username}?\nYou won't be able to see their messages or communicate with them.`);
-            if (confirmed) {
-                const response = await fetch(`/api/block_user/${userId}`, { method: 'POST' });
-                const data = await response.json();
-                if (data.success) {
-                    alert(currentLang === 'ar' ? `✓ تم حظر ${username}` : `✓ ${username} blocked`);
-                    updateExplore();
-                } else {
-                    alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
-                }
-            }
-        }
-    }
-
-    // Profile Picture Upload
-    document.getElementById('profilePicInput')?.addEventListener('change', async function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        if (!file.type.startsWith('image/')) {
-            document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Please select an image file</span>';
-            return;
-        }
-        
-        if (file.size > 2 * 1024 * 1024) {
-            document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Image too large (max 2MB)</span>';
-            return;
-        }
-        
-        document.getElementById('uploadStatus').innerHTML = '<span style="color: var(--accent);"><i class="fas fa-spinner fa-spin"></i> Uploading...</span>';
-        
-        try {
-            const reader = new FileReader();
-            reader.onloadend = async function() {
-                const base64String = reader.result;
-                
-                const response = await fetch('/api/update_profile_pic', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ profile_pic: base64String })
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    document.getElementById('uploadStatus').innerHTML = '<span style="color: #10b981;">✅ Profile picture updated!</span>';
-                    setTimeout(() => loadProfile(), 1000);
-                } else {
-                    document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Upload failed: ' + (data.error || 'Unknown error') + '</span>';
-                }
-            };
-            reader.readAsDataURL(file);
-        } catch(err) {
-            console.error('Upload error:', err);
-            document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Network error</span>';
-        }
-        
-        e.target.value = '';
-    });
-
-    // Password confirmation
-    document.getElementById('signupForm')?.addEventListener('submit', function(e) {
-        const pwd = document.getElementById('signupPassword').value;
-        const confirm = document.getElementById('confirmPassword').value;
-        if (pwd !== confirm) {
-            e.preventDefault();
-            document.getElementById('passwordError').style.display = 'block';
-        }
-    });
-
-    // Search, Filter, Pagination variables
-    let allUsers = [];
-    let currentPage = 1;
-    const usersPerPage = 20;
-
-    async function filterUsers() {
-        const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-        const category = document.getElementById('categoryFilter')?.value || 'all';
-        const skillType = document.getElementById('skillTypeFilter')?.value || 'all';
-        
-        let filtered = allUsers.filter(user => {
-            const matchesSearch = user.username.toLowerCase().includes(searchTerm) ||
-                                  user.skillOffer.toLowerCase().includes(searchTerm) ||
-                                  user.skillLearn.toLowerCase().includes(searchTerm);
-            const matchesCategory = category === 'all' || user.category === category;
-            let matchesSkillType = true;
-            if (skillType === 'offer') matchesSkillType = user.skillOffer !== 'Generalist';
-            if (skillType === 'learn') matchesSkillType = user.skillLearn !== 'Everything';
-            return matchesSearch && matchesCategory && matchesSkillType;
-        });
-        
-        currentPage = 1;
-        renderPaginatedUsers(filtered);
-    }
-
-    function renderPaginatedUsers(users) {
-        const container = document.getElementById('cardsContainer');
-        if (!container) return;
-        
-        const start = (currentPage - 1) * usersPerPage;
-        const paginatedUsers = users.slice(start, start + usersPerPage);
-        
-        if (paginatedUsers.length === 0) {
-            container.innerHTML = `<div class="empty-state">No users found matching your criteria.</div>`;
-        } else {
-            container.innerHTML = paginatedUsers.map(user => `
-                <div class="profile-card user-card" data-user-id="${user.id}">
-                    <img src="${user.profile_pic}" class="avatar-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                    <h3>${escapeHtml(user.username)}</h3>
-                    <div class="rating-stars">
-                        ${generateStars(user.rating || 0)}
-                        <span class="rating-count">(${user.reviewCount || 0})</span>
-                    </div>
-                    <div class="skills-wrapper">
-                        <div class="skill-badge"><span>📤 Offers</span><strong>${escapeHtml(user.skillOffer)}</strong></div>
-                        <div class="skill-badge"><span>📥 Wants</span><strong>${escapeHtml(user.skillLearn)}</strong></div>
-                    </div>
-                    ${getActionButton(user)}
-                </div>
-            `).join('');
-        }
-        
-        const totalPages = Math.ceil(users.length / usersPerPage);
-        const paginationDiv = document.getElementById('pagination');
-        if (paginationDiv) {
-            paginationDiv.innerHTML = `
-                <button onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>◀ Previous</button>
-                <span>Page ${currentPage} of ${totalPages || 1}</span>
-                <button onclick="changePage(1)" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}>Next ▶</button>
-            `;
-        }
-    }
-
-    function changePage(delta) {
-        currentPage += delta;
-        filterUsers();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function generateStars(rating) {
-        const full = Math.floor(rating);
-        const half = rating % 1 >= 0.5;
-        let stars = '';
-        for (let i = 0; i < full; i++) stars += '<i class="fas fa-star" style="color:#f59e0b;"></i>';
-        if (half) stars += '<i class="fas fa-star-half-alt" style="color:#f59e0b;"></i>';
-        while (stars.length / 29 < 5) stars += '<i class="far fa-star" style="color:#f59e0b;"></i>';
-        return stars;
-    }
-
-    function getActionButton(user) {
-        if (user.relationship === 'accepted') {
-            return `
-                <div style="display: flex; gap: 8px; width: 100%;">
-                    <button onclick="openChat(${user.id}, '${escapeHtml(user.username)}')" class="chat-btn" style="flex: 2; background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                        <i class="fas fa-comment"></i> ${translations[currentLang]?.btnChat || 'Chat'}
-                    </button>
-                    <button onclick="toggleBlockUser(${user.id}, '${escapeHtml(user.username)}', ${user.is_blocked || false})" class="block-btn" style="flex: 1; background: ${user.is_blocked ? '#10b981' : '#ef4444'}; color: white; border: none; border-radius: 30px; cursor: pointer; transition: all 0.3s;">
-                        <i class="fas ${user.is_blocked ? 'fa-check' : 'fa-ban'}"></i> ${user.is_blocked ? (translations[currentLang]?.unblock || 'Unblock') : (translations[currentLang]?.block || 'Block')}
-                    </button>
-                </div>
-            `;
-        } else if (user.relationship === 'pending') {
-            return `<button disabled class="pending-btn" style="background: #9ca3af; color: white; border: none; padding: 10px; border-radius: 30px; width: 100%;">${translations[currentLang]?.btnPending || 'Pending'}</button>`;
-        } else {
-            return `<button onclick="sendFriendRequest(${user.id})" class="add-btn" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 10px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.3s;"><i class="fas fa-user-plus"></i> ${translations[currentLang]?.btnAdd || 'Add Friend'}</button>`;
-        }
-    }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    // User Skills Functions (FIXED - uses dedicated API)
-    
-    async function loadUserSkills() {
-        try {
-            // 1. Get current user ID
-            const userRes = await fetch('/api/current_user');
-            if (!userRes.ok) throw new Error('Failed to fetch current user');
-            const user = await userRes.json();
-
-            // 2. Fetch skills for this specific user from the backend
-            const skillsRes = await fetch(`/api/user_skills/${user.id}`);
-            if (!skillsRes.ok) throw new Error('Failed to fetch user skills');
-            const skills = await skillsRes.json();
-
-            // 3. Update the HTML elements
-            const offerElement = document.getElementById('profileSkillOffer');
-            const learnElement = document.getElementById('profileSkillLearn');
-
-            if (offerElement) {
-                offerElement.innerHTML = escapeHtml(skills.skillOffer || 'Not specified');
-            }
-            if (learnElement) {
-                learnElement.innerHTML = escapeHtml(skills.skillLearn || 'Not specified');
-            }
-        } catch(e) {
-            console.error('Error loading skills:', e);
-            const offerElement = document.getElementById('profileSkillOffer');
-            const learnElement = document.getElementById('profileSkillLearn');
-            if (offerElement) offerElement.innerHTML = 'Error loading';
-            if (learnElement) learnElement.innerHTML = 'Error loading';
-        }
-    }
-
-    // My Friends Functions (with Rate button)
-    
-    async function loadMyFriends() {
-        try {
-            const response = await fetch('/api/my_friends');
-            if (response.status === 401) return;
-            
-            const friends = await response.json();
-            const container = document.getElementById('myFriendsList');
-            const friendsCount = document.getElementById('friendsCount');
-            
-            if (!container) return;
-            
-            if (friendsCount) {
-                friendsCount.textContent = friends.length;
-            }
-            
-            if (friends.length === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--text-muted);">
-                    <i class="fas fa-user-friends" style="font-size: 40px; margin-bottom: 10px; display: block;"></i>
-                    <span data-i18n="noFriendsYet">${translations[currentLang].noFriendsYet}</span>
-                </div>`;
-                return;
-            }
-            
-            container.innerHTML = friends.map(friend => `
-                <div class="friend-item" style="display: flex; align-items: center; gap: 15px; padding: 12px; border-bottom: 1px solid var(--border); transition: all 0.3s; border-radius: 12px;">
-                    <img src="${friend.profile_pic}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                    <div style="flex: 1;">
-                        <strong style="font-size: 1rem;">${escapeHtml(friend.username)}</strong>
-                        <div style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
-                            <span style="font-size: 11px; background: rgba(102, 126, 234, 0.1); padding: 2px 8px; border-radius: 20px;">📤 ${escapeHtml(friend.skillOffer)}</span>
-                            <span style="font-size: 11px; background: rgba(236, 72, 153, 0.1); padding: 2px 8px; border-radius: 20px;">📥 ${escapeHtml(friend.skillLearn)}</span>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button onclick="openChat(${friend.id}, '${escapeHtml(friend.username)}')" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 8px 16px; border-radius: 25px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
-                            <i class="fas fa-comment"></i> ${translations[currentLang].btnChat}
-                        </button>
-                        <button onclick="showReviewModal(${friend.id}, '${escapeHtml(friend.username)}')" style="background: transparent; border: 1px solid var(--border); padding: 8px 12px; border-radius: 25px; cursor: pointer; font-size: 12px;">
-                            <i class="fas fa-star"></i> Rate
-                        </button>
-                        <button onclick="viewFriendProfile(${friend.id})" style="background: transparent; border: 1px solid var(--border); padding: 8px 12px; border-radius: 25px; cursor: pointer; font-size: 12px;">
-                            <i class="fas fa-user"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-            
-        } catch(e) {
-            console.error('Error loading friends:', e);
-        }
-    }
-
-    function viewFriendProfile(friendId) {
-        const friend = allUsers.find(u => u.id === friendId);
-        if (friend) {
-            alert(`${friend.username}\n📤 ${translations[currentLang].lblOffers}: ${friend.skillOffer}\n📥 ${translations[currentLang].lblWants}: ${friend.skillLearn}\n⭐ Rating: ${(friend.rating || 0).toFixed(1)}/5`);
-        }
-    }
-
-    // Review System Functions
-    
-    let currentReviewUserId = null;
-    let currentReviewUserName = '';
-
-    function initRatingStars() {
-        const stars = document.querySelectorAll('#ratingStars i');
-        stars.forEach(star => {
-            star.addEventListener('click', function() {
-                const rating = parseInt(this.getAttribute('data-rating'));
-                document.getElementById('selectedRating').value = rating;
-                
-                stars.forEach(s => {
-                    const starRating = parseInt(s.getAttribute('data-rating'));
-                    if (starRating <= rating) {
-                        s.className = 'fas fa-star';
-                        s.style.color = '#f59e0b';
-                    } else {
-                        s.className = 'far fa-star';
-                        s.style.color = '';
-                    }
-                });
-            });
-            
-            star.addEventListener('mouseenter', function() {
-                const rating = parseInt(this.getAttribute('data-rating'));
-                stars.forEach(s => {
-                    const starRating = parseInt(s.getAttribute('data-rating'));
-                    if (starRating <= rating) {
-                        s.className = 'fas fa-star';
-                        s.style.color = '#f59e0b';
-                    }
-                });
-            });
-            
-            star.addEventListener('mouseleave', function() {
-                const selectedRating = parseInt(document.getElementById('selectedRating').value);
-                stars.forEach(s => {
-                    const starRating = parseInt(s.getAttribute('data-rating'));
-                    if (selectedRating > 0 && starRating <= selectedRating) {
-                        s.className = 'fas fa-star';
-                        s.style.color = '#f59e0b';
-                    } else {
-                        s.className = 'far fa-star';
-                        s.style.color = '';
-                    }
-                });
-            });
-        });
-    }
-
-    function showReviewModal(userId, userName) {
-        currentReviewUserId = userId;
-        currentReviewUserName = userName;
-        document.getElementById('reviewUserName').innerText = userName;
-        document.getElementById('selectedRating').value = 0;
-        document.getElementById('reviewComment').value = '';
-        
-        const stars = document.querySelectorAll('#ratingStars i');
-        stars.forEach(star => {
-            star.className = 'far fa-star';
-            star.style.color = '';
-        });
-        
-        document.getElementById('reviewModal').style.display = 'flex';
-    }
-
-    function closeReviewModal() {
-        document.getElementById('reviewModal').style.display = 'none';
-        currentReviewUserId = null;
-    }
-
-    async function submitReview() {
-        const rating = document.getElementById('selectedRating').value;
-        const comment = document.getElementById('reviewComment').value;
-        
-        if (!rating || rating === '0') {
-            alert(currentLang === 'ar' ? 'الرجاء اختيار تقييم' : 'Please select a rating');
-            return;
-        }
-        
-        try {
-            const response = await fetch(`/api/submit_review/${currentReviewUserId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rating: parseInt(rating), comment: comment })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                alert(currentLang === 'ar' ? '✓ تم إرسال تقييمك بنجاح' : '✓ Review submitted successfully');
-                closeReviewModal();
-                loadProfile();
-            } else {
-                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
-            }
-        } catch(err) {
-            alert(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error');
-        }
-    }
-
-    // Site Rating Functions
-    
-    let selectedSiteRating = 0;
-
-    async function loadSiteRating() {
-        try {
-            const response = await fetch('/api/site_rating');
-            const data = await response.json();
-            
-            const avgRating = data.average_rating || 0;
-            const ratingCount = data.rating_count || 0;
-            
-            document.getElementById('avgRatingValue').innerText = avgRating.toFixed(1);
-            document.getElementById('ratingCount').innerText = `(${ratingCount} votes)`;
-            
-            const avgStarsContainer = document.getElementById('avgRatingStars');
-            if (avgStarsContainer) {
-                avgStarsContainer.innerHTML = generateStars(avgRating);
-            }
-            
-            if (data.user_rated) {
-                document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">✓ Thank you for your rating!</span>';
-                const stars = document.querySelectorAll('#siteRatingStars i');
-                stars.forEach(star => {
-                    star.style.cursor = 'default';
-                    star.style.opacity = '0.5';
-                });
-            }
-        } catch(e) {
-            console.error('Error loading site rating:', e);
-        }
-    }
-
-    function initSiteRatingStars() {
-        const stars = document.querySelectorAll('#siteRatingStars i');
-        stars.forEach(star => {
-            star.addEventListener('click', async function() {
-                const checkResponse = await fetch('/api/site_rating');
-                const checkData = await checkResponse.json();
-                if (checkData.user_rated) {
-                    alert(currentLang === 'ar' ? 'لقد قمت بتقييم الموقع بالفعل! شكراً لك' : 'You have already rated the site! Thank you');
-                    return;
-                }
-                
-                const rating = parseInt(this.getAttribute('data-site-rating'));
-                selectedSiteRating = rating;
-                
-                const response = await fetch('/api/site_rating', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ rating: rating })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">✓ Thank you for your rating!</span>';
-                    
-                    stars.forEach(s => {
-                        s.style.cursor = 'default';
-                        s.style.opacity = '0.5';
-                        const starRating = parseInt(s.getAttribute('data-site-rating'));
-                        if (starRating <= rating) {
-                            s.className = 'fas fa-star';
-                            s.style.color = '#f59e0b';
-                        } else {
-                            s.className = 'far fa-star';
-                            s.style.color = '';
-                        }
-                    });
-                    
-                    loadSiteRating();
-                } else {
-                    alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
-                }
-            });
-            
-            star.addEventListener('mouseenter', function() {
-                if (document.querySelector('#siteRatingMessage span')?.innerText.includes('Thank you')) return;
-                const rating = parseInt(this.getAttribute('data-site-rating'));
-                stars.forEach(s => {
-                    const starRating = parseInt(s.getAttribute('data-site-rating'));
-                    if (starRating <= rating) {
-                        s.className = 'fas fa-star';
-                        s.style.color = '#f59e0b';
-                    }
-                });
-            });
-            
-            star.addEventListener('mouseleave', function() {
-                if (document.querySelector('#siteRatingMessage span')?.innerText.includes('Thank you')) return;
-                stars.forEach(s => {
-                    s.className = 'far fa-star';
-                    s.style.color = '';
-                });
-            });
-        });
-    }
-
-    // Admin Messages Functions
-    
-    async function loadAdminMessages() {
-        try {
-            const response = await fetch('/api/contact_messages');
-            
-            if (response.status === 403 || response.status === 401) {
-                const section = document.getElementById('adminMessagesSection');
-                if (section) section.style.display = 'none';
-                return;
-            }
-            
-            if (!response.ok) return;
-            
-            const messages = await response.json();
-            const section = document.getElementById('adminMessagesSection');
-            const container = document.getElementById('adminMessagesList');
-            const unreadBadge = document.getElementById('unreadBadge');
-            
-            if (!section || !container) return;
-            
-            section.style.display = 'block';
-            
-            const unreadCount = messages.filter(m => !m.is_read).length;
-            if (unreadBadge) {
-                if (unreadCount > 0) {
-                    unreadBadge.textContent = `${unreadCount} New`;
-                    unreadBadge.style.display = 'inline-block';
-                } else {
-                    unreadBadge.style.display = 'none';
-                }
-            }
-            
-            if (messages.length === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);">
-                    <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 10px; display: block;"></i>
-                    No messages yet
-                </div>`;
-                return;
-            }
-            
-            container.innerHTML = messages.map(msg => `
-                <div class="admin-message-item" data-msg-id="${msg.id}" style="background: ${!msg.is_read ? 'rgba(102, 126, 234, 0.08)' : 'transparent'}; border-bottom: 1px solid var(--border); padding: 16px; transition: all 0.3s; border-radius: 12px; margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;">
-                        <div style="flex: 1;">
-                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
-                                <strong style="color: var(--accent);"><i class="fas fa-envelope"></i> ${escapeHtml(msg.email)}</strong>
-                                <span style="font-size: 11px; color: var(--text-muted);"><i class="far fa-calendar-alt"></i> ${new Date(msg.created_at).toLocaleString()}</span>
-                                ${!msg.is_read ? '<span style="background: #ef4444; color: white; font-size: 10px; padding: 2px 8px; border-radius: 20px;">NEW</span>' : ''}
-                            </div>
-                            <p style="color: var(--text-primary); margin: 0; line-height: 1.5; word-break: break-word;">${escapeHtml(msg.message)}</p>
-                        </div>
-                        ${!msg.is_read ? `
-                            <button onclick="markMessageRead(${msg.id}, this)" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.3s;">
-                                <i class="fas fa-check"></i> Mark as read
-                            </button>
-                        ` : `
-                            <span style="font-size: 12px; color: #10b981;"><i class="fas fa-check-circle"></i> Read</span>
-                        `}
-                    </div>
-                </div>
-            `).join('');
-            
-        } catch(e) {
-            console.error('Error loading admin messages:', e);
-        }
-    }
-
-    async function markMessageRead(msgId, btnElement) {
-        try {
-            const response = await fetch(`/api/mark_message_read/${msgId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            });
-            
-            if (response.ok) {
-                const messageItem = btnElement.closest('.admin-message-item');
-                if (messageItem) {
-                    messageItem.style.background = 'transparent';
-                    const buttonContainer = btnElement.parentElement;
-                    buttonContainer.innerHTML = '<span style="font-size: 12px; color: #10b981;"><i class="fas fa-check-circle"></i> Read</span>';
-                }
-                
-                const unreadBadge = document.getElementById('unreadBadge');
-                if (unreadBadge) {
-                    const currentText = unreadBadge.textContent;
-                    const currentCount = parseInt(currentText) || 0;
-                    const newCount = currentCount - 1;
-                    if (newCount <= 0) {
-                        unreadBadge.style.display = 'none';
-                    } else {
-                        unreadBadge.textContent = `${newCount} New`;
-                    }
-                }
-            }
-        } catch(e) {
-            console.error('Error marking message as read:', e);
-        }
-    }
-
-    function refreshAdminMessages() {
-        loadAdminMessages();
-    }
-
-    // Profile Loading with updated layout
-    
-    async function loadProfile() {
-        const res = await fetch('/api/current_user');
-        const container = document.getElementById('profileCard');
-        
-        if (res.status === 401) {
-            container.innerHTML = `<p class="empty-state">${translations?.[currentLang]?.notLoggedIn || 'You are not logged in yet.'}</p>`;
-            return;
-        }
-        
-        const user = await res.json();
-        container.innerHTML = `
-            <div class="profile-info" style="text-align:center;">
-                <img src="${user.profile_pic}" class="avatar-img-large" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent); margin-bottom: 15px;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                <h3 style="margin-top:1rem;">${escapeHtml(user.username)}</h3>
-                <p style="color:var(--text-muted);">${user.email || ''}</p>
-                <div class="rating-stars" style="justify-content: center; margin-top: 10px;">
-                    ${generateStars(user.rating || 0)}
-                    <span class="rating-count">(${user.reviewCount || 0})</span>
-                </div>
-            </div>
-        `;
-        
-        loadIncomingRequests();
-        loadMyReviews();
-        loadAdminMessages();
-        loadMyFriends();
-        loadUserSkills();
-    }
-
-    async function loadIncomingRequests() {
-        const res = await fetch('/api/my_requests');
-        const requests = await res.json();
-        const container = document.getElementById('incomingRequests');
-        
-        if (!container) return;
-        
-        if (requests.length === 0) {
-            container.innerHTML = `<p class="empty-state">No pending requests.</p>`;
-            return;
-        }
-        
-        container.innerHTML = requests.map(req => `
-            <div class="request-item" style="display: flex; align-items: center; gap: 12px; padding: 10px; border-bottom: 1px solid var(--border);">
-                <img src="${req.sender_pic}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                <span style="flex:1; font-weight:600;">${escapeHtml(req.sender_name)}</span>
-                <div style="display:flex; gap:0.5rem;">
-                    <button onclick="handleFriendRequest(${req.id}, 'accept')" style="background: #10b981; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer;">✓ Accept</button>
-                    <button onclick="handleFriendRequest(${req.id}, 'reject')" style="background: #9ca3af; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer;">✗ Reject</button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    async function handleFriendRequest(reqId, action) {
-        const res = await fetch(`/api/handle_request/${reqId}/${action}`, { method: 'POST' });
-        if (res.ok) {
-            loadIncomingRequests();
-            if (action === 'accept') {
-                updateExplore();
-                loadMyFriends();
-            }
-        }
-    }
-
-    async function loadMyReviews() {
-        const container = document.getElementById('myReviews');
-        if (!container) return;
-        
-        try {
-            const res = await fetch('/api/my_reviews');
-            if (res.status === 401) {
-                container.innerHTML = `<p class="empty-state">Not logged in.</p>`;
-                return;
-            }
-            const reviews = await res.json();
-            
-            if (reviews.length === 0) {
-                container.innerHTML = `<p class="empty-state">No reviews yet.</p>`;
-                return;
-            }
-            
-            container.innerHTML = reviews.map(review => `
-                <div class="request-item" style="display: flex; align-items: center; gap: 12px; padding: 10px; border-bottom: 1px solid var(--border);">
-                    <img src="${review.reviewer_pic}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                    <div style="flex:1;">
-                        <strong>${escapeHtml(review.reviewer_name)}</strong>
-                        <div class="rating-stars" style="margin-top: 4px;">${generateStars(review.rating)}</div>
-                        <p style="font-size:0.85rem; margin-top:0.3rem;">${escapeHtml(review.comment)}</p>
-                    </div>
-                </div>
-            `).join('');
-        } catch(e) {
-            console.error('Error loading reviews:', e);
-        }
-    }
-
-    // Chat System
-    
-    async function openChat(userId, userName) {
-        activeChatId = userId;
-        document.getElementById('chatWith').innerText = userName;
-        document.getElementById('chatWindow').style.display = 'flex';
-        loadMessages();
-        
-        if (chatInterval) clearInterval(chatInterval);
-        chatInterval = setInterval(loadMessages, 3000);
-    }
-
-    function closeChat() {
-        document.getElementById('chatWindow').style.display = 'none';
-        if (chatInterval) {
-            clearInterval(chatInterval);
-            chatInterval = null;
-        }
-        activeChatId = null;
-    }
-
-    async function loadMessages() {
-        if (!activeChatId) return;
-        
-        try {
-            const res = await fetch(`/api/chat/${activeChatId}`);
-            const msgs = await res.json();
-            
-            const meRes = await fetch('/api/current_user');
-            const me = await meRes.json();
-            
-            const container = document.getElementById('chatMessages');
-            container.innerHTML = msgs.map(m => `
-                <div style="align-self: ${m.sender === me.id ? 'flex-end' : 'flex-start'}; 
-                            background: ${m.sender === me.id ? '#a855f7' : 'var(--bg-card)'}; 
-                            color: ${m.sender === me.id ? 'white' : 'var(--text-primary)'};
-                            padding: 8px 15px; 
-                            border-radius: 18px; 
-                            max-width: 80%; 
-                            font-size: 14px;
-                            box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                    ${escapeHtml(m.text)}
-                </div>
-            `).join('');
-            
-            container.scrollTop = container.scrollHeight;
-        } catch(e) {
-            console.error('Error loading messages:', e);
-        }
-    }
-
-    async function sendMessage() {
-        const input = document.getElementById('chatInput');
-        const text = input.value.trim();
-        if (!text || !activeChatId) return;
-        
-        try {
-            await fetch(`/api/chat/${activeChatId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text })
-            });
-            input.value = '';
-            loadMessages();
-        } catch(e) {
-            console.error('Error sending message:', e);
-        }
-    }
-
-    // Contact Form
-    document.addEventListener('submit', async (e) => {
-        if (e.target.id === 'contactForm') {
-            e.preventDefault();
-            const email = document.getElementById('contactEmail')?.value;
-            const message = document.getElementById('contactMessage')?.value;
-            
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn?.innerHTML;
-            if (submitBtn) {
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-                submitBtn.disabled = true;
-            }
-            
-            try {
-                const res = await fetch('/api/contact', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, message })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    alert(currentLang === 'ar' ? "✓ شكراً لتواصلك معنا! تم إرسال رسالتك." : "✓ Thanks for reaching out! Your message has been sent.");
-                    e.target.reset();
-                } else {
-                    alert("Error: " + (data.error || "Please try again."));
-                }
-            } catch(err) {
-                alert("Network error. Please try again.");
-            } finally {
-                if (submitBtn) {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }
-            }
-        }
-    });
-
-    // Send Friend Request
-    async function sendFriendRequest(userId) {
-        const res = await fetch(`/api/send_request/${userId}`, { method: 'POST' });
-        if (res.status === 401) {
-            alert('You are not logged in yet.');
-        } else {
-            const data = await res.json();
-            if (data.success) updateExplore();
-        }
-    }
-
-    // Update Explore
-    async function updateExplore() {
-        try {
-            const response = await fetch('/api/users');
-            allUsers = await response.json();
-            filterUsers();
-            applyTilt();
-        } catch(e) { console.error(e); }
-    }
-
-    // Apply Tilt Effect
-    function applyTilt() {
-        const cards = document.querySelectorAll('.card-container, .profile-card, .user-card');
-        cards.forEach(card => {
-            if (card.dataset.tiltApplied) return;
-            card.dataset.tiltApplied = "true";
-            
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                const multiplier = 8;
-                const xRotate = (-y / (rect.height / 2)) * multiplier;
-                const yRotate = (x / (rect.width / 2)) * multiplier;
-                card.style.transform = `perspective(1000px) rotateX(${xRotate}deg) rotateY(${yRotate}deg) scale(1.02)`;
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = '';
-                card.style.transition = 'all 0.5s ease';
-            });
-        });
-    }
-
-    // Navigation Handler
-    function showSection(id, btnElement) {
-        document.querySelectorAll("main section").forEach(sec => {
-            sec.style.display = "none";
-        });
-        
-        const target = document.getElementById(id);
-        if (!target) return;
-        
-        target.style.display = id === 'home' ? 'flex' : 'block';
-        
-        if (btnElement) {
-            document.querySelectorAll("nav button").forEach(btn => {
-                btn.classList.remove("active");
-            });
-            btnElement.classList.add("active");
-        }
-        
-        if (id === 'explore') {
-            updateExplore();
-        }
-        if (id === 'profile') {
-            loadProfile();
-        }
-        
-        setTimeout(applyTilt, 50);
-    }
-
-    // Initialize
-    let activeChatId = null;
-    let chatInterval = null;
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const section = urlParams.get('section');
-        const error = urlParams.get('error');
-        if (error) alert("Error: " + error);
-        if (section) {
-            const btn = Array.from(document.querySelectorAll('nav button')).find(b => b.getAttribute('onclick')?.includes(section));
-            if (btn) showSection(section, btn);
-        } else {
-            showSection('home', document.querySelector('nav button'));
-        }
-        
-        initRatingStars();
-        initSiteRatingStars();
-        loadSiteRating();
-    });
-</script>
 </body>
 </html>
