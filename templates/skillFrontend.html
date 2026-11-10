@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- CSS will be linked here -->
     <link rel="stylesheet" href="{{ url_for('static', filename='skillFrontEnd.css') }}">
 </head>
 <body>
@@ -47,11 +46,11 @@
                 <input type="text" id="homeSearch" data-i18n-placeholder="searchSkills" placeholder="🔍 Search for skills...">
                 <select id="homeCategory">
                     <option value="all" data-i18n="allCategories">All Categories</option>
-                    <option value="tech" data-i18n="categoryTech">💻 Technology</option>
-                    <option value="art" data-i18n="categoryArt">🎨 Art & Design</option>
-                    <option value="language" data-i18n="categoryLang">🌍 Languages</option>
-                    <option value="business" data-i18n="categoryBusiness">📊 Business</option>
-                    <option value="sports" data-i18n="categorySports">⚽ Sports</option>
+                    <option value="tech" data-i18n="categoryTech">Technology</option>
+                    <option value="art" data-i18n="categoryArt">Art & Design</option>
+                    <option value="language" data-i18n="categoryLang">Languages</option>
+                    <option value="business" data-i18n="categoryBusiness">Business</option>
+                    <option value="sports" data-i18n="categorySports">Sports</option>
                 </select>
                 <button class="home-btn" onclick="showSection('explore', document.querySelectorAll('nav button')[4])" data-i18n="navExplore">Explore Skills</button>
             </div>
@@ -73,11 +72,11 @@
                 <div id="passwordError" style="color:#ef4444; font-size:0.8rem; display:none;" data-i18n="passwordMismatch">Passwords do not match!</div>
                 <select name="skillCategory" required>
                     <option value="" data-i18n="selectCategory">Select Skill Category</option>
-                    <option value="tech" data-i18n="categoryTech">💻 Technology</option>
-                    <option value="art" data-i18n="categoryArt">🎨 Art & Design</option>
-                    <option value="language" data-i18n="categoryLang">🌍 Languages</option>
-                    <option value="business" data-i18n="categoryBusiness">📊 Business</option>
-                    <option value="sports" data-i18n="categorySports">⚽ Sports</option>
+                    <option value="tech" data-i18n="categoryTech">Technology</option>
+                    <option value="art" data-i18n="categoryArt">Art & Design</option>
+                    <option value="language" data-i18n="categoryLang">Languages</option>
+                    <option value="business" data-i18n="categoryBusiness">Business</option>
+                    <option value="sports" data-i18n="categorySports">Sports</option>
                 </select>
                 <input type="text" name="skillOffer" data-i18n-placeholder="skillOffer" placeholder="Skill You Offer" required>
                 <input type="text" name="skillLearn" data-i18n-placeholder="skillLearn" placeholder="Skill You Want to Learn" required>
@@ -244,17 +243,17 @@
             <div class="explore-filters">
                 <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="🔍 Search by name or skill..." onkeyup="filterUsers()">
                 <select id="categoryFilter" onchange="filterUsers()">
-                    <option value="all" data-i18n="allCategories">📂 All Categories</option>
-                    <option value="tech" data-i18n="categoryTech">💻 Technology</option>
-                    <option value="art" data-i18n="categoryArt">🎨 Art & Design</option>
-                    <option value="language" data-i18n="categoryLang">🌍 Languages</option>
-                    <option value="business" data-i18n="categoryBusiness">📊 Business</option>
-                    <option value="sports" data-i18n="categorySports">⚽ Sports</option>
+                    <option value="all" data-i18n="allCategories">All Categories</option>
+                    <option value="tech" data-i18n="categoryTech">Technology</option>
+                    <option value="art" data-i18n="categoryArt">Art & Design</option>
+                    <option value="language" data-i18n="categoryLang">Languages</option>
+                    <option value="business" data-i18n="categoryBusiness">Business</option>
+                    <option value="sports" data-i18n="categorySports">Sports</option>
                 </select>
                 <select id="skillTypeFilter" onchange="filterUsers()">
                     <option value="all" data-i18n="allOfferLearn">All: Offer/Learn</option>
-                    <option value="offer" data-i18n="offering">📤 Offering</option>
-                    <option value="learn" data-i18n="wantToLearn">📥 Want to Learn</option>
+                    <option value="offer" data-i18n="offering">Offering</option>
+                    <option value="learn" data-i18n="wantToLearn">Want to Learn</option>
                 </select>
             </div>
         </div>
@@ -352,11 +351,11 @@
         <div style="margin-bottom:20px;">
             <label style="display:block; margin-bottom:5px; font-weight:600;" data-i18n="category">Category</label>
             <select id="editCategory" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-main);">
-                <option value="tech" data-i18n="categoryTech">💻 Technology</option>
-                <option value="art" data-i18n="categoryArt">🎨 Art & Design</option>
-                <option value="language" data-i18n="categoryLang">🌍 Languages</option>
-                <option value="business" data-i18n="categoryBusiness">📊 Business</option>
-                <option value="sports" data-i18n="categorySports">⚽ Sports</option>
+                <option value="tech" data-i18n="categoryTech">Technology</option>
+                <option value="art" data-i18n="categoryArt">Art & Design</option>
+                <option value="language" data-i18n="categoryLang">Languages</option>
+                <option value="business" data-i18n="categoryBusiness">Business</option>
+                <option value="sports" data-i18n="categorySports">Sports</option>
             </select>
         </div>
         
@@ -394,9 +393,7 @@
 
 <script src="{{ url_for('static', filename='skillFrontEnd.js') }}"></script>
 <script>
-    // ============================================
     // Dark Mode Toggle
-    // ============================================
     function toggleDarkMode() {
         document.body.classList.toggle('dark');
         localStorage.setItem('darkMode', document.body.classList.contains('dark'));
@@ -412,9 +409,7 @@
         document.getElementById('darkModeBtn').innerHTML = '<i class="fas fa-sun"></i>';
     }
 
-    // ============================================
     // Edit Profile Functions
-    // ============================================
     let currentUserData = {};
 
     async function showEditProfileModal() {
@@ -477,9 +472,7 @@
         }
     }
 
-    // ============================================
     // Delete Account Functions
-    // ============================================
     function showDeleteAccountModal() {
         document.getElementById('deleteModal').style.display = 'flex';
     }
@@ -517,9 +510,7 @@
         }
     }
 
-    // ============================================
     // Block/Unblock Functions
-    // ============================================
     async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
         if (isCurrentlyBlocked) {
             const confirmed = confirm(currentLang === 'ar' ? `إلغاء حظر ${username}؟` : `Unblock ${username}?`);
@@ -548,9 +539,7 @@
         }
     }
 
-    // ============================================
     // Profile Picture Upload
-    // ============================================
     document.getElementById('profilePicInput')?.addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -595,9 +584,7 @@
         e.target.value = '';
     });
 
-    // ============================================
     // Password confirmation
-    // ============================================
     document.getElementById('signupForm')?.addEventListener('submit', function(e) {
         const pwd = document.getElementById('signupPassword').value;
         const confirm = document.getElementById('confirmPassword').value;
@@ -607,9 +594,7 @@
         }
     });
 
-    // ============================================
     // Search, Filter, Pagination variables
-    // ============================================
     let allUsers = [];
     let currentPage = 1;
     const usersPerPage = 20;
@@ -717,9 +702,7 @@
         });
     }
 
-    // ============================================
     // User Skills Functions (FIXED - uses dedicated API)
-    // ============================================
     
     async function loadUserSkills() {
         try {
@@ -752,9 +735,7 @@
         }
     }
 
-    // ============================================
     // My Friends Functions (with Rate button)
-    // ============================================
     
     async function loadMyFriends() {
         try {
@@ -815,9 +796,7 @@
         }
     }
 
-    // ============================================
     // Review System Functions
-    // ============================================
     
     let currentReviewUserId = null;
     let currentReviewUserName = '';
@@ -919,9 +898,7 @@
         }
     }
 
-    // ============================================
     // Site Rating Functions
-    // ============================================
     
     let selectedSiteRating = 0;
 
@@ -1020,9 +997,7 @@
         });
     }
 
-    // ============================================
     // Admin Messages Functions
-    // ============================================
     
     async function loadAdminMessages() {
         try {
@@ -1126,9 +1101,7 @@
         loadAdminMessages();
     }
 
-    // ============================================
     // Profile Loading with updated layout
-    // ============================================
     
     async function loadProfile() {
         const res = await fetch('/api/current_user');
@@ -1226,9 +1199,7 @@
         }
     }
 
-    // ============================================
     // Chat System
-    // ============================================
     
     async function openChat(userId, userName) {
         activeChatId = userId;
@@ -1297,9 +1268,7 @@
         }
     }
 
-    // ============================================
     // Contact Form
-    // ============================================
     document.addEventListener('submit', async (e) => {
         if (e.target.id === 'contactForm') {
             e.preventDefault();
@@ -1324,10 +1293,10 @@
                     alert(currentLang === 'ar' ? "✓ شكراً لتواصلك معنا! تم إرسال رسالتك." : "✓ Thanks for reaching out! Your message has been sent.");
                     e.target.reset();
                 } else {
-                    alert("❌ Error: " + (data.error || "Please try again."));
+                    alert("Error: " + (data.error || "Please try again."));
                 }
             } catch(err) {
-                alert("❌ Network error. Please try again.");
+                alert("Network error. Please try again.");
             } finally {
                 if (submitBtn) {
                     submitBtn.innerHTML = originalText;
@@ -1337,9 +1306,7 @@
         }
     });
 
-    // ============================================
     // Send Friend Request
-    // ============================================
     async function sendFriendRequest(userId) {
         const res = await fetch(`/api/send_request/${userId}`, { method: 'POST' });
         if (res.status === 401) {
@@ -1350,9 +1317,7 @@
         }
     }
 
-    // ============================================
     // Update Explore
-    // ============================================
     async function updateExplore() {
         try {
             const response = await fetch('/api/users');
@@ -1362,9 +1327,7 @@
         } catch(e) { console.error(e); }
     }
 
-    // ============================================
     // Apply Tilt Effect
-    // ============================================
     function applyTilt() {
         const cards = document.querySelectorAll('.card-container, .profile-card, .user-card');
         cards.forEach(card => {
@@ -1388,9 +1351,7 @@
         });
     }
 
-    // ============================================
     // Navigation Handler
-    // ============================================
     function showSection(id, btnElement) {
         document.querySelectorAll("main section").forEach(sec => {
             sec.style.display = "none";
@@ -1418,9 +1379,7 @@
         setTimeout(applyTilt, 50);
     }
 
-    // ============================================
     // Initialize
-    // ============================================
     let activeChatId = null;
     let chatInterval = null;
     
