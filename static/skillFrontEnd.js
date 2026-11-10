@@ -1,9 +1,3 @@
-// ============================================
-// Gainhub - Main JavaScript File
-// All improvements included: Search, Filter, Pagination, Dark Mode, Reviews, Admin Messages, Friends List, Block/Unblock, Delete Account, Edit Profile, User Skills, Site Rating, User Review
-// ============================================
-
-// --- 1. Global Variables ---
 let currentLang = 'en';
 let activeChatId = null;
 let chatInterval = null;
@@ -11,7 +5,24 @@ let allUsers = [];
 let currentPage = 1;
 const usersPerPage = 20;
 
-// --- 2. Dark Mode Toggle ---
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+    toast.innerHTML = `<i class="fas ${iconClass}"></i><span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.classList.add('hiding');
+        toast.addEventListener('animationend', () => toast.remove());
+    }, 3000);
+}
+
 function toggleDarkMode() {
     document.body.classList.toggle('dark');
     localStorage.setItem('darkMode', document.body.classList.contains('dark'));
@@ -25,17 +36,15 @@ function toggleDarkMode() {
     }
 }
 
-// Initialize Dark Mode from localStorage
 if (localStorage.getItem('darkMode') === 'true') {
     document.body.classList.add('dark');
     const darkBtn = document.getElementById('darkModeBtn');
     if (darkBtn) darkBtn.innerHTML = '<i class="fas fa-sun"></i>';
 }
 
-// --- 3. Translation Dictionary ---
 const translations = {
     en: {
-        langBtn: "🌐 العربية",
+        langBtn: "العربية",
         tagline: "Share your knowledge, learn something new.",
         navHome: "Home",
         navSignup: "Sign Up",
@@ -60,13 +69,13 @@ const translations = {
         btnSend: "Send Message",
         myReviewsTitle: "My Reviews",
         noReviews: "No reviews yet.",
-        searchPlaceholder: "🔍 Search by name or skill...",
+        searchPlaceholder: "Search by name or skill...",
         allCategories: "All Categories",
         categoryTech: "Technology",
         categoryArt: "Art & Design",
         categoryLang: "Languages",
-        categoryBusiness: "📊 Business",
-        categorySports: "⚽ Sports",
+        categoryBusiness: "Business",
+        categorySports: "Sports",
         contactMessagesTitle: "Contact Messages",
         noMessages: "No messages yet",
         markAsRead: "Mark as read",
@@ -115,7 +124,7 @@ const translations = {
         averageRating: "Average Rating"
     },
     ar: {
-        langBtn: "🌐 English",
+        langBtn: "English",
         tagline: "شارك معرفتك وتعلم شيئاً جديداً.",
         navHome: "الرئيسية",
         navSignup: "إنشاء حساب",
@@ -140,13 +149,13 @@ const translations = {
         btnSend: "إرسال",
         myReviewsTitle: "تقييماتي",
         noReviews: "لا توجد تقييمات بعد.",
-        searchPlaceholder: "🔍 بحث بالاسم أو المهارة...",
+        searchPlaceholder: "بحث بالاسم أو المهارة...",
         allCategories: "جميع الأقسام",
-        categoryTech: "💻 تقنية",
-        categoryArt: "🎨 فن وتصميم",
-        categoryLang: "🌍 لغات",
-        categoryBusiness: "📊 أعمال",
-        categorySports: "⚽ رياضة",
+        categoryTech: "تقنية",
+        categoryArt: "فن وتصميم",
+        categoryLang: "لغات",
+        categoryBusiness: "أعمال",
+        categorySports: "رياضة",
         contactMessagesTitle: "رسائل التواصل",
         noMessages: "لا توجد رسائل بعد",
         markAsRead: "تحديد كمقروء",
@@ -196,13 +205,11 @@ const translations = {
     }
 };
 
-// --- 4. Language Toggle ---
 function toggleLanguage() {
     currentLang = currentLang === 'en' ? 'ar' : 'en';
     document.documentElement.lang = currentLang;
     document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
     
-    // Update all data-i18n elements
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[currentLang][key]) {
@@ -214,7 +221,6 @@ function toggleLanguage() {
         }
     });
     
-    // Update all placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
         if (translations[currentLang][key]) {
@@ -225,10 +231,8 @@ function toggleLanguage() {
     const langBtn = document.querySelector('.lang-toggle');
     if (langBtn) langBtn.textContent = translations[currentLang].langBtn;
     
-    // Update category options
     updateCategoryOptions();
     
-    // Update admin messages section text if visible
     const adminSection = document.getElementById('adminMessagesSection');
     if (adminSection && adminSection.style.display !== 'none') {
         const titleSpan = adminSection.querySelector('h3 span');
@@ -243,13 +247,11 @@ function toggleLanguage() {
         loadAdminMessages();
     }
     
-    // Update friends section title
     const friendsTitle = document.querySelector('#myFriendsList')?.parentElement?.querySelector('h3 span');
     if (friendsTitle && friendsTitle.getAttribute('data-i18n') === 'myFriendsTitle') {
         friendsTitle.textContent = translations[currentLang].myFriendsTitle;
     }
     
-    // Update reviews title
     const reviewsTitle = document.querySelector('#myReviews')?.parentElement?.querySelector('h3');
     if (reviewsTitle) {
         const reviewSpan = reviewsTitle.querySelector('span');
@@ -258,13 +260,11 @@ function toggleLanguage() {
         }
     }
     
-    // Update pending requests title
     const pendingTitle = document.querySelector('#incomingRequests')?.parentElement?.querySelector('h3');
     if (pendingTitle && pendingTitle.getAttribute('data-i18n') === 'pendingTitle') {
         pendingTitle.textContent = translations[currentLang].pendingTitle;
     }
     
-    // Update delete modal texts
     const deleteModal = document.getElementById('deleteModal');
     if (deleteModal) {
         const titleEl = deleteModal.querySelector('h3');
@@ -279,7 +279,6 @@ function toggleLanguage() {
         if (inputEl) inputEl.placeholder = translations[currentLang].typeUsernameToConfirm;
     }
     
-    // Update edit modal texts
     const editModal = document.getElementById('editProfileModal');
     if (editModal) {
         const titleEl = editModal.querySelector('h3');
@@ -293,13 +292,11 @@ function toggleLanguage() {
         if (cancelBtn) cancelBtn.textContent = translations[currentLang].cancel;
         if (saveBtn) saveBtn.textContent = translations[currentLang].save;
         
-        // Update skill labels
         const offerLabel = editModal.querySelector('label[data-i18n="skillOffer"]');
         const learnLabel = editModal.querySelector('label[data-i18n="skillLearn"]');
         if (offerLabel) offerLabel.textContent = translations[currentLang].skillOffer;
         if (learnLabel) learnLabel.textContent = translations[currentLang].skillLearn;
         
-        // Update category options
         const categorySelect = editModal.querySelector('#editCategory');
         if (categorySelect) {
             const options = categorySelect.querySelectorAll('option');
@@ -331,7 +328,6 @@ function updateCategoryOptions() {
     });
 }
 
-// --- 5. Navigation Between Sections ---
 function showSection(id, btnElement) {
     document.querySelectorAll("main section").forEach(sec => {
         sec.style.display = "none";
@@ -359,7 +355,6 @@ function showSection(id, btnElement) {
     setTimeout(applyTilt, 50);
 }
 
-// --- 6. 3D Tilt Effect on Cards ---
 function applyTilt() {
     const cards = document.querySelectorAll('.card-container, .profile-card, .user-card');
     cards.forEach(card => {
@@ -383,7 +378,6 @@ function applyTilt() {
     });
 }
 
-// --- 7. Profile Loading ---
 async function loadProfile() {
     const res = await fetch('/api/current_user');
     const container = document.getElementById('profileCard');
@@ -413,20 +407,16 @@ async function loadProfile() {
     loadUserSkills();
 }
 
-// --- 8. User Skills Functions (FIXED - uses dedicated API) ---
 async function loadUserSkills() {
     try {
-        // 1. Get current user ID
         const userRes = await fetch('/api/current_user');
         if (!userRes.ok) throw new Error('Failed to fetch current user');
         const user = await userRes.json();
 
-        // 2. Fetch skills for this specific user from the backend
         const skillsRes = await fetch(`/api/user_skills/${user.id}`);
         if (!skillsRes.ok) throw new Error('Failed to fetch user skills');
         const skills = await skillsRes.json();
 
-        // 3. Update the HTML elements
         const offerElement = document.getElementById('profileSkillOffer');
         const learnElement = document.getElementById('profileSkillLearn');
 
@@ -445,7 +435,6 @@ async function loadUserSkills() {
     }
 }
 
-// --- 9. Edit Profile Functions ---
 let currentUserData = {};
 
 async function showEditProfileModal() {
@@ -477,7 +466,7 @@ async function saveProfileChanges() {
     const newCategory = document.getElementById('editCategory').value;
     
     if (!newUsername) {
-        alert(currentLang === 'ar' ? 'الرجاء إدخال اسم المستخدم' : 'Please enter a username');
+        showToast(currentLang === 'ar' ? 'الرجاء إدخال اسم المستخدم' : 'Please enter a username', 'error');
         return;
     }
     
@@ -496,19 +485,18 @@ async function saveProfileChanges() {
         const data = await response.json();
         
         if (data.success) {
-            alert(currentLang === 'ar' ? '✓ تم تحديث الملف الشخصي بنجاح' : '✓ Profile updated successfully');
+            showToast(currentLang === 'ar' ? 'تم تحديث الملف الشخصي بنجاح' : 'Profile updated successfully', 'success');
             closeEditProfileModal();
             loadProfile();
             updateExplore();
         } else {
-            alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+            showToast(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error, 'error');
         }
     } catch(err) {
-        alert(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error');
+        showToast(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error', 'error');
     }
 }
 
-// --- 10. Delete Account Functions ---
 function showDeleteAccountModal() {
     document.getElementById('deleteModal').style.display = 'flex';
 }
@@ -522,7 +510,7 @@ async function deleteAccount() {
     const username = document.getElementById('confirmDeleteUsername').value;
     
     if (!username) {
-        alert(currentLang === 'ar' ? 'الرجاء كتابة اسم المستخدم للتأكيد' : 'Please enter your username to confirm');
+        showToast(currentLang === 'ar' ? 'الرجاء كتابة اسم المستخدم للتأكيد' : 'Please enter your username to confirm', 'error');
         return;
     }
     
@@ -536,17 +524,16 @@ async function deleteAccount() {
         const data = await response.json();
         
         if (data.success) {
-            alert(currentLang === 'ar' ? 'تم حذف الحساب بنجاح. وداعاً!' : 'Account deleted successfully. Goodbye!');
+            showToast(currentLang === 'ar' ? 'تم حذف الحساب بنجاح. وداعاً!' : 'Account deleted successfully. Goodbye!', 'success');
             window.location.href = '/';
         } else {
-            alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+            showToast(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error, 'error');
         }
     } catch(err) {
-        alert(currentLang === 'ar' ? 'خطأ في الشبكة. الرجاء المحاولة مرة أخرى' : 'Network error. Please try again.');
+        showToast(currentLang === 'ar' ? 'خطأ في الشبكة. الرجاء المحاولة مرة أخرى' : 'Network error. Please try again.', 'error');
     }
 }
 
-// --- 11. Block/Unblock Functions ---
 async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
     if (isCurrentlyBlocked) {
         const confirmed = confirm(currentLang === 'ar' ? `إلغاء حظر ${username}؟` : `Unblock ${username}?`);
@@ -554,11 +541,11 @@ async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
             const response = await fetch(`/api/unblock_user/${userId}`, { method: 'POST' });
             const data = await response.json();
             if (data.success) {
-                alert(currentLang === 'ar' ? `✓ تم إلغاء حظر ${username}` : `✓ ${username} unblocked`);
+                showToast(currentLang === 'ar' ? `تم إلغاء حظر ${username}` : `${username} unblocked`, 'success');
                 updateExplore();
                 loadProfile();
             } else {
-                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+                showToast(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error, 'error');
             }
         }
     } else {
@@ -567,17 +554,16 @@ async function toggleBlockUser(userId, username, isCurrentlyBlocked) {
             const response = await fetch(`/api/block_user/${userId}`, { method: 'POST' });
             const data = await response.json();
             if (data.success) {
-                alert(currentLang === 'ar' ? `✓ تم حظر ${username}` : `✓ ${username} blocked`);
+                showToast(currentLang === 'ar' ? `تم حظر ${username}` : `${username} blocked`, 'success');
                 updateExplore();
                 loadProfile();
             } else {
-                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+                showToast(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error, 'error');
             }
         }
     }
 }
 
-// --- 12. Profile Picture Upload with Compression ---
 function compressImage(file, maxSizeMB = 2) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -622,12 +608,12 @@ document.getElementById('profilePicInput')?.addEventListener('change', async fun
     if (!file) return;
     
     if (!file.type.startsWith('image/')) {
-        document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Please select an image file</span>';
+        document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">Please select an image file</span>';
         return;
     }
     
     if (file.size > 10 * 1024 * 1024) {
-        document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Image too large (max 10MB original)</span>';
+        document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">Image too large (max 10MB original)</span>';
         return;
     }
     
@@ -636,11 +622,8 @@ document.getElementById('profilePicInput')?.addEventListener('change', async fun
     try {
         const compressedBlob = await compressImage(file);
         
-        console.log(`📸 Original size: ${(file.size / 1024).toFixed(2)} KB`);
-        console.log(`📸 Compressed size: ${(compressedBlob.size / 1024).toFixed(2)} KB`);
-        
         if (compressedBlob.size > 2 * 1024 * 1024) {
-            document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Image too large even after compression (max 2MB)</span>';
+            document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">Image too large even after compression (max 2MB)</span>';
             return;
         }
         
@@ -658,23 +641,22 @@ document.getElementById('profilePicInput')?.addEventListener('change', async fun
             
             const data = await response.json();
             if (data.success) {
-                document.getElementById('uploadStatus').innerHTML = '<span style="color: #10b981;">✅ Profile picture updated!</span>';
+                document.getElementById('uploadStatus').innerHTML = '<span style="color: #10b981;">Profile picture updated!</span>';
                 setTimeout(() => loadProfile(), 1000);
             } else {
-                document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Upload failed: ' + (data.error || 'Unknown error') + '</span>';
+                document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">Upload failed: ' + (data.error || 'Unknown error') + '</span>';
             }
         };
         reader.readAsDataURL(compressedBlob);
         
     } catch(err) {
         console.error('Upload error:', err);
-        document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">❌ Error processing image</span>';
+        document.getElementById('uploadStatus').innerHTML = '<span style="color: #ef4444;">Error processing image</span>';
     }
     
     e.target.value = '';
 });
 
-// --- 13. My Friends List (with Chat, Rate, Block buttons) ---
 async function loadMyFriends() {
     try {
         const response = await fetch('/api/my_friends');
@@ -704,8 +686,8 @@ async function loadMyFriends() {
                 <div style="flex: 1;">
                     <strong style="font-size: 1rem;">${escapeHtml(friend.username)}</strong>
                     <div style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
-                        <span style="font-size: 11px; background: rgba(102, 126, 234, 0.1); padding: 2px 8px; border-radius: 20px;">📤 ${escapeHtml(friend.skillOffer)}</span>
-                        <span style="font-size: 11px; background: rgba(236, 72, 153, 0.1); padding: 2px 8px; border-radius: 20px;">📥 ${escapeHtml(friend.skillLearn)}</span>
+                        <span style="font-size: 11px; background: rgba(102, 126, 234, 0.1); padding: 2px 8px; border-radius: 20px;">${escapeHtml(friend.skillOffer)}</span>
+                        <span style="font-size: 11px; background: rgba(236, 72, 153, 0.1); padding: 2px 8px; border-radius: 20px;">${escapeHtml(friend.skillLearn)}</span>
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
@@ -730,11 +712,10 @@ async function loadMyFriends() {
 function viewFriendProfile(friendId) {
     const friend = allUsers.find(u => u.id === friendId);
     if (friend) {
-        alert(`${friend.username}\n📤 ${translations[currentLang].lblOffers}: ${friend.skillOffer}\n📥 ${translations[currentLang].lblWants}: ${friend.skillLearn}\n⭐ Rating: ${(friend.rating || 0).toFixed(1)}/5`);
+        showToast(`${friend.username} | ${translations[currentLang].lblOffers}: ${friend.skillOffer} | ${translations[currentLang].lblWants}: ${friend.skillLearn} | Rating: ${(friend.rating || 0).toFixed(1)}/5`, 'success');
     }
 }
 
-// --- 14. Review System Functions ---
 let currentReviewUserId = null;
 let currentReviewUserName = '';
 
@@ -810,7 +791,7 @@ async function submitReview() {
     const comment = document.getElementById('reviewComment').value;
     
     if (!rating || rating === '0') {
-        alert(currentLang === 'ar' ? 'الرجاء اختيار تقييم' : 'Please select a rating');
+        showToast(currentLang === 'ar' ? 'الرجاء اختيار تقييم' : 'Please select a rating', 'error');
         return;
     }
     
@@ -824,18 +805,17 @@ async function submitReview() {
         const data = await response.json();
         
         if (data.success) {
-            alert(currentLang === 'ar' ? '✓ تم إرسال تقييمك بنجاح' : '✓ Review submitted successfully');
+            showToast(currentLang === 'ar' ? 'تم إرسال تقييمك بنجاح' : 'Review submitted successfully', 'success');
             closeReviewModal();
             loadProfile();
         } else {
-            alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+            showToast(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error, 'error');
         }
     } catch(err) {
-        alert(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error');
+        showToast(currentLang === 'ar' ? 'خطأ في الشبكة' : 'Network error', 'error');
     }
 }
 
-// --- 15. Site Rating Functions ---
 let selectedSiteRating = 0;
 
 async function loadSiteRating() {
@@ -855,7 +835,7 @@ async function loadSiteRating() {
         }
         
         if (data.user_rated) {
-            document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">✓ Thank you for your rating!</span>';
+            document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">Thank you for your rating!</span>';
             const stars = document.querySelectorAll('#siteRatingStars i');
             stars.forEach(star => {
                 star.style.cursor = 'default';
@@ -874,7 +854,7 @@ function initSiteRatingStars() {
             const checkResponse = await fetch('/api/site_rating');
             const checkData = await checkResponse.json();
             if (checkData.user_rated) {
-                alert(currentLang === 'ar' ? 'لقد قمت بتقييم الموقع بالفعل! شكراً لك' : 'You have already rated the site! Thank you');
+                showToast(currentLang === 'ar' ? 'لقد قمت بتقييم الموقع بالفعل! شكراً لك' : 'You have already rated the site! Thank you', 'error');
                 return;
             }
             
@@ -890,7 +870,7 @@ function initSiteRatingStars() {
             const data = await response.json();
             
             if (data.success) {
-                document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">✓ Thank you for your rating!</span>';
+                document.getElementById('siteRatingMessage').innerHTML = '<span style="color: #10b981;">Thank you for your rating!</span>';
                 
                 stars.forEach(s => {
                     s.style.cursor = 'default';
@@ -907,7 +887,7 @@ function initSiteRatingStars() {
                 
                 loadSiteRating();
             } else {
-                alert(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error);
+                showToast(currentLang === 'ar' ? 'خطأ: ' + data.error : 'Error: ' + data.error, 'error');
             }
         });
         
@@ -933,7 +913,6 @@ function initSiteRatingStars() {
     });
 }
 
-// --- 16. Incoming Requests ---
 async function loadIncomingRequests() {
     const res = await fetch('/api/my_requests');
     const requests = await res.json();
@@ -951,8 +930,8 @@ async function loadIncomingRequests() {
             <img src="${req.sender_pic}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
             <span style="flex:1; font-weight:600;">${escapeHtml(req.sender_name)}</span>
             <div style="display:flex; gap:0.5rem;">
-                <button onclick="handleFriendRequest(${req.id}, 'accept')" style="background: #10b981; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all 0.3s;">✓ Accept</button>
-                <button onclick="handleFriendRequest(${req.id}, 'reject')" style="background: #9ca3af; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all 0.3s;">✗ Reject</button>
+                <button onclick="handleFriendRequest(${req.id}, 'accept')" style="background: #10b981; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all 0.3s;">Accept</button>
+                <button onclick="handleFriendRequest(${req.id}, 'reject')" style="background: #9ca3af; color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all 0.3s;">Reject</button>
             </div>
         </div>
     `).join('');
@@ -969,7 +948,6 @@ async function handleFriendRequest(reqId, action) {
     }
 }
 
-// --- 17. My Reviews ---
 async function loadMyReviews() {
     const container = document.getElementById('myReviews');
     if (!container) return;
@@ -1002,7 +980,6 @@ async function loadMyReviews() {
     }
 }
 
-// --- 18. Generate Stars ---
 function generateStars(rating) {
     const full = Math.floor(rating);
     const half = rating % 1 >= 0.5;
@@ -1013,7 +990,6 @@ function generateStars(rating) {
     return stars;
 }
 
-// --- 19. Explore Users with Search, Filter, Pagination ---
 async function updateExplore() {
     try {
         const response = await fetch('/api/users');
@@ -1064,8 +1040,8 @@ function renderPaginatedUsers(users) {
                     <span class="rating-count">(${user.reviewCount || 0})</span>
                 </div>
                 <div class="skills-wrapper">
-                    <div class="skill-badge"><span>📤 ${translations[currentLang].lblOffers}</span><strong>${escapeHtml(user.skillOffer)}</strong></div>
-                    <div class="skill-badge"><span>📥 ${translations[currentLang].lblWants}</span><strong>${escapeHtml(user.skillLearn)}</strong></div>
+                    <div class="skill-badge"><span>${translations[currentLang].lblOffers}</span><strong>${escapeHtml(user.skillOffer)}</strong></div>
+                    <div class="skill-badge"><span>${translations[currentLang].lblWants}</span><strong>${escapeHtml(user.skillLearn)}</strong></div>
                 </div>
                 ${getActionButton(user)}
             </div>
@@ -1076,9 +1052,9 @@ function renderPaginatedUsers(users) {
     const paginationDiv = document.getElementById('pagination');
     if (paginationDiv) {
         paginationDiv.innerHTML = `
-            <button onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>◀ Previous</button>
+            <button onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
             <span>Page ${currentPage} of ${totalPages || 1}</span>
-            <button onclick="changePage(1)" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}>Next ▶</button>
+            <button onclick="changePage(1)" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}>Next</button>
         `;
     }
 }
@@ -1111,25 +1087,25 @@ function getActionButton(user) {
 async function sendFriendRequest(userId) {
     const res = await fetch(`/api/send_request/${userId}`, { method: 'POST' });
     if (res.status === 401) {
-        alert(translations[currentLang].notLoggedIn);
+        showToast(translations[currentLang].notLoggedIn, 'error');
     } else {
         const data = await res.json();
         if (data.success) updateExplore();
     }
 }
 
-// --- 20. Escape HTML for Security (XSS Protection) ---
 function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
+    return str.replace(/[&<>"']/g, function(m) {
         if (m === '&') return '&amp;';
         if (m === '<') return '&lt;';
         if (m === '>') return '&gt;';
+        if (m === '"') return '&quot;';
+        if (m === "'") return '&#039;';
         return m;
     });
 }
 
-// --- 21. Chat System ---
 async function openChat(userId, userName) {
     activeChatId = userId;
     document.getElementById('chatWith').innerText = userName;
@@ -1197,7 +1173,6 @@ async function sendMessage() {
     }
 }
 
-// --- 22. Contact Form ---
 document.addEventListener('submit', async (e) => {
     if (e.target.id === 'contactForm') {
         e.preventDefault();
@@ -1219,13 +1194,13 @@ document.addEventListener('submit', async (e) => {
             });
             const data = await res.json();
             if (data.success) {
-                alert(currentLang === 'ar' ? "✓ شكراً لتواصلك معنا! تم إرسال رسالتك." : "✓ Thanks for reaching out! Your message has been sent.");
+                showToast(currentLang === 'ar' ? "شكراً لتواصلك معنا! تم إرسال رسالتك." : "Thanks for reaching out! Your message has been sent.", 'success');
                 e.target.reset();
             } else {
-                alert("❌ Error: " + (data.error || "Please try again."));
+                showToast("Error: " + (data.error || "Please try again."), 'error');
             }
         } catch(err) {
-            alert("❌ Network error. Please try again.");
+            showToast("Network error. Please try again.", 'error');
         } finally {
             if (submitBtn) {
                 submitBtn.innerHTML = originalText;
@@ -1235,7 +1210,6 @@ document.addEventListener('submit', async (e) => {
     }
 });
 
-// --- 23. Password Confirmation on Signup ---
 document.getElementById('signupForm')?.addEventListener('submit', function(e) {
     const pwd = document.getElementById('signupPassword')?.value;
     const confirm = document.getElementById('confirmPassword')?.value;
@@ -1249,14 +1223,12 @@ document.getElementById('signupForm')?.addEventListener('submit', function(e) {
     }
 });
 
-// --- 24. Enter key for chat ---
 document.addEventListener('keypress', (e) => {
     if (e.key === 'Enter' && document.activeElement?.id === 'chatInput') {
         sendMessage();
     }
 });
 
-// --- 25. Home Page Search ---
 function homeSearch() {
     const searchTerm = document.getElementById('homeSearch')?.value || '';
     const category = document.getElementById('homeCategory')?.value || 'all';
@@ -1279,12 +1251,10 @@ function homeSearch() {
     }
 }
 
-// Connect home search button
 document.getElementById('homeSearch')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') homeSearch();
 });
 
-// --- 26. Admin Messages Functions ---
 async function loadAdminMessages() {
     try {
         const response = await fetch('/api/contact_messages');
@@ -1387,7 +1357,6 @@ function refreshAdminMessages() {
     loadAdminMessages();
 }
 
-// Make functions available globally
 window.refreshAdminMessages = refreshAdminMessages;
 window.loadMyFriends = loadMyFriends;
 window.viewFriendProfile = viewFriendProfile;
@@ -1402,9 +1371,7 @@ window.showReviewModal = showReviewModal;
 window.closeReviewModal = closeReviewModal;
 window.submitReview = submitReview;
 
-// --- 27. Initialize on DOM Load ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Set up search listeners
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('keyup', () => filterUsers());
@@ -1420,12 +1387,11 @@ document.addEventListener('DOMContentLoaded', () => {
         skillTypeFilter.addEventListener('change', () => filterUsers());
     }
     
-    // Handle URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const section = urlParams.get('section');
     const error = urlParams.get('error');
     
-    if (error) alert("Error: " + error);
+    if (error) showToast("Error: " + error, 'error');
     if (section) {
         const btns = document.querySelectorAll('nav button');
         const btn = Array.from(btns).find(b => 
@@ -1436,10 +1402,8 @@ document.addEventListener('DOMContentLoaded', () => {
         showSection('home', document.querySelector('nav button'));
     }
     
-    // Update category options for current language
     updateCategoryOptions();
     
-    // Initialize all placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
         if (translations[currentLang][key]) {
@@ -1447,7 +1411,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Initialize rating stars and site rating
     initRatingStars();
     initSiteRatingStars();
     loadSiteRating();
